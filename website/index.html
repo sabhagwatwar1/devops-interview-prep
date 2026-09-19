@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevOps & SRE Interview Preparation Platform | Production Master Vault</title>
+    <meta name="description" content="Ultimate DevOps & SRE interview preparation hub. 1326+ deep technical questions,  scenario incident triage, and flashcards.">
+    <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Cyberpunk UI Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-topic="hub">
+    <!-- Cyber Canvas Background -->
+    <div class="cyber-grid-overlay"></div>
+    
+    <!-- Navigation Header -->
+    <header class="cyber-navbar">
+        <div class="nav-container">
+            <a href="index.html" class="cyber-logo">
+                <span class="logo-glitch" data-text="DEVOPS.SRE">DEVOPS.SRE</span>
+                <span class="logo-tag">VAULT_2026</span>
+            </a>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a>
+<a href="kubernetes.html" class=""><i class="fa-solid fa-dharmachakra"></i> Kubernetes</a>
+<a href="terraform.html" class=""><i class="fa-solid fa-cube"></i> Terraform</a>
+<a href="linux.html" class=""><i class="fa-brands fa-linux"></i> Linux</a>
+<a href="aws.html" class=""><i class="fa-brands fa-aws"></i> AWS</a>
+<a href="cicd.html" class=""><i class="fa-solid fa-code-branch"></i> CI/CD</a>
+<a href="docker.html" class=""><i class="fa-brands fa-docker"></i> Docker</a>
+<a href="networking.html" class=""><i class="fa-solid fa-network-wired"></i> Networking</a>
+<a href="git.html" class=""><i class="fa-brands fa-git-alt"></i> Git</a>
+<a href="gitops.html" class=""><i class="fa-solid fa-arrows-spin"></i> GitOps</a>
+<a href="observability.html" class=""><i class="fa-solid fa-chart-line"></i> Observability</a>
+<a href="security.html" class=""><i class="fa-solid fa-shield-halved"></i> DevSecOps</a>
+<a href="scenario.html" class=""><i class="fa-solid fa-users-gear"></i> Scenarios</a>
+<a href="community.html" class=""><i class="fa-solid fa-comments"></i> Community</a>
+            </nav>
+
+            <div class="nav-controls">
+                <button class="cyber-mobile-toggle" aria-label="Open Menu">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <!-- Master Cyber Hero Section -->
+        <section class="master-hero-section">
+            <div class="container hero-grid">
+                <div class="hero-left" data-aos="fade-right">
+                    <div class="hero-badge">
+                        <span class="pulse-dot"></span> 2026 SRE & DEVOPS INTERVIEW COMPILATION
+                    </div>
+                    <h1 class="hero-glitch-title">
+                        CRACK THE <span class="dynamic-color-devops-sre">DEVOPS & SRE</span> INTERVIEW
+                    </h1>
+                    <p class="hero-subtext">
+                        Over <strong>1326+ curated questions</strong> across 12 domains (100+ questions per topic), deep  real-time incident scenarios, 3D flashcards, and automated doubts solver for Junior, Mid-Level, and Senior/Staff Engineers.
+                    </p>
+
+                    <div class="hero-cta-group">
+                        <a href="#topics-grid" class="cyber-btn btn-primary btn-glow">
+                            <i class="fa-solid fa-rocket"></i> Launch Question Vaults
+                        </a>
+                        <a href="community.html" class="cyber-btn btn-outline">
+                            <i class="fa-solid fa-comments"></i> Ask Doubts & Forum
+                        </a>
+                    </div>
+
+                    <div class="hero-stats-row">
+                        <div class="hero-stat-item">
+                            <span class="stat-number count-up" data-target="1326">0</span>+
+                            <span class="stat-label">Interview Q&As</span>
+                        </div>
+                        <div class="hero-stat-item">
+                            <span class="stat-number count-up" data-target="12">0</span>
+                            <span class="stat-label">Specialized Topics</span>
+                        </div>
+                        <div class="hero-stat-item">
+                            <span class="stat-number count-up" data-target="100">0</span>%
+                            <span class="stat-label">Real PDF Coverage</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Hero: Live Interactive DevOps Terminal -->
+                <div class="hero-right" data-aos="fade-left">
+                    <div class="cyber-terminal-card">
+                        <div class="terminal-bar">
+                            <div class="term-dots">
+                                <span class="term-dot red"></span>
+                                <span class="term-dot yellow"></span>
+                                <span class="term-dot green"></span>
+                            </div>
+                            <div class="term-title"><i class="fa-solid fa-terminal"></i> production-sre-shell -- bash</div>
+                            <div class="term-status"><span class="pulse-green"></span> LIVE</div>
+                        </div>
+                        <div class="terminal-body" id="cyber-terminal-body">
+                            <div class="terminal-line"><span class="term-prompt">sre@cloud-ops:~$</span> <span class="typed-command" id="terminal-typed-cmd">terraform plan -out=tfplan.binary</span></div>
+                            <div class="terminal-output" id="terminal-output-area">Terraform used the selected providers to generate the following execution plan:
+  # module.eks_cluster.aws_eks_node_group.workers[0] will be updated in-place
+  ~ scaling_config {
+      ~ desired_size = 6 -> 12
+      ~ max_size     = 10 -> 24
+        min_size     = 3
+    }
+
+Plan: 0 to add, 1 to change, 0 to destroy.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Master Topics Grid Section -->
+        <section id="topics-grid" class="master-topics-section container">
+            <div class="section-title-wrapper" data-aos="fade-up">
+                <span class="hud-subtitle">100+ QUESTIONS PER TOPIC</span>
+                <h2 class="section-heading">12 Specialized Interview Vaults</h2>
+                <p class="section-description">Select any topic below to open its dedicated vault with  full PDF questions, 3D flashcards, and instant filters.</p>
+            </div>
+
+            <div class="topics-cards-grid">
+
+                <a href="linux.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #00ff88; border-color: #00ff88;">
+                            <i class="fa-brands fa-linux"></i>
+                        </div>
+                        <span class="vault-count-badge">104+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Linux & OS Fundamentals</h3>
+                    <p class="vault-desc">Kernel architecture, systemd, process lifecycle, virtual memory & page cache, Inodes, eBPF, and production performance tuning.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #00ff88;">Open Vault (104 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="git.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #f34f29; border-color: #f34f29;">
+                            <i class="fa-brands fa-git-alt"></i>
+                        </div>
+                        <span class="vault-count-badge">104+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Git & Version Control</h3>
+                    <p class="vault-desc">Branching strategies, Git internals, merge vs rebase, cherry-pick, reset vs revert, reflog, worktrees, and bisect debugging.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #f34f29;">Open Vault (104 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="cicd.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #00d4ff; border-color: #00d4ff;">
+                            <i class="fa-solid fa-code-branch"></i>
+                        </div>
+                        <span class="vault-count-badge">106+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">CI/CD Pipelines</h3>
+                    <p class="vault-desc">Continuous Delivery vs Deployment, Jenkins, GitHub Actions, GitLab CI, Tekton, Blue-Green & Canary releases.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #00d4ff;">Open Vault (106 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="docker.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #2496ed; border-color: #2496ed;">
+                            <i class="fa-brands fa-docker"></i>
+                        </div>
+                        <span class="vault-count-badge">106+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Docker & Containers</h3>
+                    <p class="vault-desc">Container runtimes, namespaces, cgroups v2, OverlayFS storage, multi-stage Dockerfiles, Distroless, and security hardening.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #2496ed;">Open Vault (106 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="kubernetes.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #326ce5; border-color: #326ce5;">
+                            <i class="fa-solid fa-dharmachakra"></i>
+                        </div>
+                        <span class="vault-count-badge">162+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Kubernetes (K8s)</h3>
+                    <p class="vault-desc">Control plane, Worker nodes, Pod lifecycle, Services, Ingress & Gateway API, PV/PVC, StorageClasses, RBAC, NetworkPolicies, and Autoscaling.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #326ce5;">Open Vault (162 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="terraform.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #844fba; border-color: #844fba;">
+                            <i class="fa-solid fa-cube"></i>
+                        </div>
+                        <span class="vault-count-badge">115+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Terraform & IaC</h3>
+                    <p class="vault-desc">State management, remote backends with locking, modules, drift detection, dynamic blocks, provisioners, and Sentinel policy-as-code.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #844fba;">Open Vault (115 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="aws.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #ff9900; border-color: #ff9900;">
+                            <i class="fa-brands fa-aws"></i>
+                        </div>
+                        <span class="vault-count-badge">112+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">AWS & Multi-Cloud</h3>
+                    <p class="vault-desc">VPC architecture, Security Groups vs NACLs, ALB/NLB, EKS, ECS, S3, IAM Roles, Multi-Region High Availability & DR.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #ff9900;">Open Vault (112 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="networking.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #00d4ff; border-color: #00d4ff;">
+                            <i class="fa-solid fa-network-wired"></i>
+                        </div>
+                        <span class="vault-count-badge">103+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Networking & Protocols</h3>
+                    <p class="vault-desc">OSI 7-Layer, TCP 3-way handshake, UDP, DNS recursive resolution, Subnetting & CIDR, routing, and 10-step troubleshooting.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #00d4ff;">Open Vault (103 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="gitops.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #ef6b73; border-color: #ef6b73;">
+                            <i class="fa-solid fa-arrows-spin"></i>
+                        </div>
+                        <span class="vault-count-badge">102+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">GitOps & ArgoCD</h3>
+                    <p class="vault-desc">Declarative GitOps principles, Pull vs Push delivery, ArgoCD ApplicationSets, automated drift reconciliation, and multi-cluster scaling.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #ef6b73;">Open Vault (102 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="observability.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #00ff88; border-color: #00ff88;">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+                        <span class="vault-count-badge">103+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Monitoring & Observability</h3>
+                    <p class="vault-desc">The Three Pillars (Metrics, Logs, Traces), Prometheus PromQL, Grafana, ELK Stack, Datadog, SRE 4 Golden Signals, and SLOs.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #00ff88;">Open Vault (103 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="security.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #a855f7; border-color: #a855f7;">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <span class="vault-count-badge">102+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Security & DevSecOps</h3>
+                    <p class="vault-desc">Shift-Left philosophy, SAST vs DAST vs SCA, Trivy, SonarQube, Kubernetes admission controllers, HashiCorp Vault, and Secrets Store CSI.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #a855f7;">Open Vault (102 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+                <a href="scenario.html" class="topic-vault-card" data-aos="fade-up">
+                    <div class="vault-card-header">
+                        <div class="vault-icon" style="color: #facc15; border-color: #facc15;">
+                            <i class="fa-solid fa-users-gear"></i>
+                        </div>
+                        <span class="vault-count-badge">107+ Q&As</span>
+                    </div>
+                    <h3 class="vault-title">Scenarios & System Design</h3>
+                    <p class="vault-desc">Production incident response (502/503 errors, high latency, OOM), on-call triage, DORA metrics, and high-scale DevOps system design.</p>
+                    <div class="vault-footer">
+                        <span class="explore-link" style="color: #facc15;">Open Vault (107 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Flashcard Test Prep Section -->
+        <section class="master-flashcards-section container" data-aos="fade-up">
+            <div class="cyber-card flashcard-hub-card">
+                <div class="flashcard-hub-header">
+                    <div>
+                        <span class="hud-subtitle">RAPID DRILL TRAINER</span>
+                        <h3>Interactive 3D Flashcard Mode</h3>
+                        <p>Test your candidate readiness before revealing technical answers. Available across all 1326+ questions!</p>
+                    </div>
+                    <a href="kubernetes.html" class="cyber-btn btn-primary"><i class="fa-solid fa-bolt"></i> Start Drill</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Doubt Solver & Contact Form -->
+        <section id="contact-doubt" class="master-contact-section container" data-aos="fade-up">
+            <div class="section-title-wrapper">
+                <span class="hud-subtitle">GET PERSONAL ASSISTANCE</span>
+                <h2 class="section-heading">Have a Doubt? Ask Directly</h2>
+                <p class="section-description">Send your query directly to our lead SRE via automated WhatsApp or Email dispatch.</p>
+            </div>
+
+            <div class="contact-hub-grid">
+                <div class="cyber-card contact-info-card">
+                    <h3>Direct Communication Channels</h3>
+                    <p>Get fast answers to interview questions or schedule mock technical interviews.</p>
+                    
+                    <div class="contact-channels-list">
+                        <a href="https://wa.me/919876543210?text=Hello%20Shriram%20I%20have%20a%20doubt%20from%20DevOps%20Prep" target="_blank" class="channel-card whatsapp">
+                            <i class="fa-brands fa-whatsapp"></i>
+                            <div>
+                                <strong>WhatsApp Automation</strong>
+                                <span>Instant direct chat with prefilled template</span>
+                            </div>
+                        </a>
+                        <a href="https://discord.gg/devops-prep" target="_blank" class="channel-card discord">
+                            <i class="fa-brands fa-discord"></i>
+                            <div>
+                                <strong>Discord Community</strong>
+                                <span>Join our 24/7 DevOps study server</span>
+                            </div>
+                        </a>
+                        <a href="community.html" class="channel-card forum">
+                            <i class="fa-solid fa-comments"></i>
+                            <div>
+                                <strong>Public Community Forum</strong>
+                                <span>Post doubts visible to all engineers</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="cyber-card contact-form-card">
+                    <h3>Submit Your Question</h3>
+                    <form id="master-contact-form">
+                        <div class="cyber-form-group">
+                            <label>Your Name</label>
+                            <input type="text" id="contact-name" placeholder="e.g. Omkar / Alex" required>
+                        </div>
+                        <div class="cyber-form-group">
+                            <label>Your Email</label>
+                            <input type="email" id="contact-email" placeholder="name@domain.com" required>
+                        </div>
+                        <div class="cyber-form-group">
+                            <label>Target Topic</label>
+                            <select id="contact-topic">
+                                <option value="Kubernetes">Kubernetes (162 Qs)</option>
+                                <option value="Terraform">Terraform (115 Qs)</option>
+                                <option value="Linux">Linux (104 Qs)</option>
+                                <option value="AWS">AWS / Cloud (112 Qs)</option>
+                                <option value="CI/CD">CI/CD Pipelines (106 Qs)</option>
+                                <option value="Networking">Networking (103 Qs)</option>
+                                <option value="Observability">Observability (103 Qs)</option>
+                                <option value="Security">DevSecOps (102 Qs)</option>
+                                <option value="General">General Doubt</option>
+                            </select>
+                        </div>
+                        <div class="cyber-form-group">
+                            <label>Your Question / Doubt</label>
+                            <textarea id="contact-message" rows="4" placeholder="Explain your interview doubt in detail..." required></textarea>
+                        </div>
+                        <button type="submit" class="cyber-btn btn-primary btn-block">
+                            <i class="fa-solid fa-paper-plane"></i> Send to Owner (WhatsApp & Email)
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="cyber-logo">DEVOPS.SRE <span class="logo-tag">VAULT</span></div>
+                <p>The ultimate production-grade interview preparation platform for Cloud, DevOps, and Platform Engineers.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Topic Vaults</h4>
+                <div class="footer-links-grid">
+                    <a href="kubernetes.html">Kubernetes (162)</a>
+                    <a href="terraform.html">Terraform (115)</a>
+                    <a href="linux.html">Linux (104)</a>
+                    <a href="aws.html">AWS Cloud (112)</a>
+                    <a href="cicd.html">CI/CD (106)</a>
+                    <a href="networking.html">Networking (103)</a>
+                    <a href="observability.html">Observability (103)</a>
+                    <a href="security.html">DevSecOps (102)</a>
+                    <a href="scenario.html">Scenarios (107)</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4>Community</h4>
+                <div class="social-icons">
+                    <a href="https://discord.gg/devops-prep" target="_blank" class="social-btn discord"><i class="fa-brands fa-discord"></i></a>
+                    <a href="https://wa.me/919876543210" target="_blank" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://github.com" target="_blank" class="social-btn github"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DevOps SRE Master Vault. Designed for 100% Interview Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/all_questions.js"></script>
+    <script src="js/cyber_app.js"></script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Q&A Forum | DevOps & SRE Master Vault</title>
+    <meta name="description" content="Ask DevOps and SRE interview questions, share answers, upvote solutions, and get help from the community.">
+    <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Cyberpunk UI Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-topic="community">
+    <!-- Cyber Canvas Background -->
+    <div class="cyber-grid-overlay"></div>
+    
+    <!-- Navigation Header -->
+    <header class="cyber-navbar">
+        <div class="nav-container">
+            <a href="index.html" class="cyber-logo">
+                <span class="logo-glitch" data-text="DEVOPS.SRE">DEVOPS.SRE</span>
+                <span class="logo-tag">VAULT_2026</span>
+            </a>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class=""><i class="fa-solid fa-house"></i> Home</a>
+<a href="kubernetes.html" class=""><i class="fa-solid fa-dharmachakra"></i> Kubernetes</a>
+<a href="terraform.html" class=""><i class="fa-solid fa-cube"></i> Terraform</a>
+<a href="linux.html" class=""><i class="fa-brands fa-linux"></i> Linux</a>
+<a href="aws.html" class=""><i class="fa-brands fa-aws"></i> AWS</a>
+<a href="cicd.html" class=""><i class="fa-solid fa-code-branch"></i> CI/CD</a>
+<a href="docker.html" class=""><i class="fa-brands fa-docker"></i> Docker</a>
+<a href="networking.html" class=""><i class="fa-solid fa-network-wired"></i> Networking</a>
+<a href="git.html" class=""><i class="fa-brands fa-git-alt"></i> Git</a>
+<a href="gitops.html" class=""><i class="fa-solid fa-arrows-spin"></i> GitOps</a>
+<a href="observability.html" class=""><i class="fa-solid fa-chart-line"></i> Observability</a>
+<a href="security.html" class=""><i class="fa-solid fa-shield-halved"></i> DevSecOps</a>
+<a href="scenario.html" class=""><i class="fa-solid fa-users-gear"></i> Scenarios</a>
+<a href="community.html" class="active"><i class="fa-solid fa-comments"></i> Community</a>
+            </nav>
+
+            <div class="nav-controls">
+                <button class="cyber-mobile-toggle" aria-label="Open Menu">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-main-container">
+        <!-- Community Banner -->
+        <section class="topic-hero-banner" data-aos="fade-down">
+            <div class="container">
+                <div class="hero-breadcrumb">
+                    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+                </div>
+                <div class="topic-hero-header">
+                    <div class="topic-icon-badge laser-glow-box" style="color: #00ff88; border-color: #00ff88;">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <div>
+                        <h1 class="topic-page-title">Community Doubt Solver & Forum</h1>
+                        <p class="topic-page-desc">Ask real interview questions, get answers from peer engineers, upvote best practices, and collaborate.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Community Interactive Layout -->
+        <section class="community-main-section container" data-aos="fade-up">
+            <div class="community-portal-grid">
+                <!-- Left: Post Question Form -->
+                <div class="cyber-card post-qa-card">
+                    <div class="card-header-bar">
+                        <h3><i class="fa-solid fa-pen-to-square"></i> Ask a Question</h3>
+                    </div>
+                    <form id="community-portal-form">
+                        <div class="cyber-form-group">
+                            <label>Your Name / Handle</label>
+                            <input type="text" id="comm-author" placeholder="e.g. SRE_Candidate" required>
+                        </div>
+                        <div class="cyber-form-group">
+                            <label>Topic Tag</label>
+                            <select id="comm-tag">
+                                <option value="Kubernetes">Kubernetes</option>
+                                <option value="Terraform">Terraform</option>
+                                <option value="Linux">Linux</option>
+                                <option value="AWS">AWS</option>
+                                <option value="CI/CD">CI/CD</option>
+                                <option value="Networking">Networking</option>
+                                <option value="Observability">Observability</option>
+                                <option value="Security">DevSecOps</option>
+                                <option value="Scenario">Scenario / Incident</option>
+                            </select>
+                        </div>
+                        <div class="cyber-form-group">
+                            <label>Your Question / Interview Doubt</label>
+                            <textarea id="comm-question" rows="5" placeholder="What specific problem or interview question are you trying to solve?" required></textarea>
+                        </div>
+                        <button type="submit" class="cyber-btn btn-primary btn-block">
+                            <i class="fa-solid fa-plus"></i> Post to Community
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right: Active Community Feed -->
+                <div class="community-feed-wrapper">
+                    <div class="feed-header-bar">
+                        <h3><i class="fa-solid fa-fire"></i> Live Community Discussions</h3>
+                        <span id="comm-count-badge" class="hud-tag">0 Questions</span>
+                    </div>
+
+                    <div id="community-feed-container">
+                        <!-- Populated by cyber_app.js -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="cyber-logo">DEVOPS.SRE <span class="logo-tag">VAULT</span></div>
+                <p>The ultimate production-grade interview preparation platform for Cloud, DevOps, and Platform Engineers.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Topic Vaults</h4>
+                <div class="footer-links-grid">
+                    <a href="kubernetes.html">Kubernetes</a>
+                    <a href="terraform.html">Terraform</a>
+                    <a href="linux.html">Linux</a>
+                    <a href="aws.html">AWS Cloud</a>
+                    <a href="cicd.html">CI/CD</a>
+                    <a href="networking.html">Networking</a>
+                    <a href="observability.html">Observability</a>
+                    <a href="security.html">DevSecOps</a>
+                    <a href="scenario.html">Scenarios</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4>Community</h4>
+                <div class="social-icons">
+                    <a href="https://discord.gg/devops-prep" target="_blank" class="social-btn discord"><i class="fa-brands fa-discord"></i></a>
+                    <a href="https://wa.me/919876543210" target="_blank" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://github.com" target="_blank" class="social-btn github"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DevOps SRE Master Vault. Designed for 100% Interview Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/all_questions.js"></script>
+    <script src="js/cyber_app.js"></script>
+</body>
+</html>

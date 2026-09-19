@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docker & Containers Interview Prep (100+ Detailed Q&As) | DevOps & SRE Master Vault</title>
+    <meta name="description" content="Master Docker & Containers with 106+ comprehensive interview questions. Architectural diagrams, code examples, flashcards, and difficulty breakdown.">
+    <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Cyberpunk UI Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-topic="docker">
+    <!-- Cyber Canvas Background -->
+    <div class="cyber-grid-overlay"></div>
+    
+    <!-- Navigation Header -->
+    <header class="cyber-navbar">
+        <div class="nav-container">
+            <a href="index.html" class="cyber-logo">
+                <span class="logo-glitch" data-text="DEVOPS.SRE">DEVOPS.SRE</span>
+                <span class="logo-tag">VAULT_2026</span>
+            </a>
+            
+            <nav class="nav-menu">
+                <a href="index.html" class=""><i class="fa-solid fa-house"></i> Home</a>
+<a href="kubernetes.html" class=""><i class="fa-solid fa-dharmachakra"></i> Kubernetes</a>
+<a href="terraform.html" class=""><i class="fa-solid fa-cube"></i> Terraform</a>
+<a href="linux.html" class=""><i class="fa-brands fa-linux"></i> Linux</a>
+<a href="aws.html" class=""><i class="fa-brands fa-aws"></i> AWS</a>
+<a href="cicd.html" class=""><i class="fa-solid fa-code-branch"></i> CI/CD</a>
+<a href="docker.html" class="active"><i class="fa-brands fa-docker"></i> Docker</a>
+<a href="networking.html" class=""><i class="fa-solid fa-network-wired"></i> Networking</a>
+<a href="git.html" class=""><i class="fa-brands fa-git-alt"></i> Git</a>
+<a href="gitops.html" class=""><i class="fa-solid fa-arrows-spin"></i> GitOps</a>
+<a href="observability.html" class=""><i class="fa-solid fa-chart-line"></i> Observability</a>
+<a href="security.html" class=""><i class="fa-solid fa-shield-halved"></i> DevSecOps</a>
+<a href="scenario.html" class=""><i class="fa-solid fa-users-gear"></i> Scenarios</a>
+<a href="community.html" class=""><i class="fa-solid fa-comments"></i> Community</a>
+            </nav>
+
+            <div class="nav-controls">
+                <button class="cyber-mobile-toggle" aria-label="Open Menu">
+                    <i class="fa-solid fa-bars-staggered"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="page-main-container">
+        <!-- Topic Hero Banner -->
+        <section class="topic-hero-banner" data-aos="fade-down">
+            <div class="container">
+                <div class="hero-breadcrumb">
+                    <a href="index.html"><i class="fa-solid fa-house"></i> Home</a>
+                </div>
+                <div class="topic-hero-header">
+                    <div class="topic-icon-badge laser-glow-box" style="color: #2496ed; border-color: #2496ed;">
+                        <i class="fa-brands fa-docker"></i>
+                    </div>
+                    <div>
+                        <h1 class="topic-page-title">Docker & Containers</h1>
+                        <p class="topic-page-desc">Container runtimes, namespaces, cgroups v2, OverlayFS storage, multi-stage Dockerfiles, Distroless, and security hardening.</p>
+                    </div>
+                </div>
+
+                <!-- Stats Bar -->
+                <div class="topic-stats-bar">
+                    <div class="stat-pill"><i class="fa-solid fa-layer-group"></i> Total Questions: <strong class="badge-number">106</strong></div>
+                    <div class="stat-pill"><i class="fa-solid fa-shield-halved"></i> Junior: <strong>35</strong></div>
+                    <div class="stat-pill"><i class="fa-solid fa-bolt"></i> Mid-Level: <strong>36</strong></div>
+                    <div class="stat-pill"><i class="fa-solid fa-crown"></i> Senior / Lead: <strong>35</strong></div>
+                    <div class="stat-pill mastery-pill"><i class="fa-solid fa-circle-check"></i> Mastery: <span id="mastery-percent">0%</span></div>
+                </div>
+            </div>
+        </section>
+
+        
+
+        <!-- Control Toolbar: Level Filters & Search -->
+        <section class="toolbar-section container" data-aos="fade-up">
+            <div class="toolbar-wrapper">
+                <div class="filter-pills-group">
+                    <button class="filter-btn active" data-filter="all">All (106)</button>
+                    <button class="filter-btn btn-junior" data-filter="junior">Junior (35)</button>
+                    <button class="filter-btn btn-mid" data-filter="mid">Mid-Level (36)</button>
+                    <button class="filter-btn btn-senior" data-filter="senior">Senior (35)</button>
+                    <button class="filter-btn filter-saved" data-filter="saved"><i class="fa-solid fa-star" style="color: #f59e0b;"></i> Saved (<span id="saved-count">0</span>)</button>
+                </div>
+
+                <div class="search-box-wrapper">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="topic-search-input" placeholder="Search 106+ Docker & Containers questions, keywords, CLI commands..." autocomplete="off">
+                    <span class="search-count-badge" id="search-count-badge">106 / 106</span>
+                </div>
+                
+                <button class="btn-cyber btn-primary" onclick="openTopicQuiz('docker')" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;"><i class="fa-solid fa-brain"></i> Take Quiz</button>
+                    <button class="btn-cyber btn-outline" onclick="exportTopicMarkdown('docker')" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;"><i class="fa-solid fa-file-arrow-down"></i> Export Sheet</button>
+                    <div class="view-mode-toggle">
+                    <button id="mode-accordion" class="mode-btn active" title="Accordion View"><i class="fa-solid fa-bars"></i> Accordion</button>
+                    <button id="mode-flashcard" class="mode-btn" title="Flashcard Flip Mode"><i class="fa-solid fa-clone"></i> 3D Flashcards</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Questions Feed -->
+        <section class="questions-feed-section container" data-aos="fade-up">
+            <div id="questions-feed-container" class="questions-list-view">
+                <!-- Dynamically populated by cyber_app.js -->
+            </div>
+        </section>
+
+        <!-- Doubt Escalation CTA -->
+        <section class="doubt-escalation-banner container" data-aos="fade-up">
+            <div class="cyber-card cta-card">
+                <div class="cta-content">
+                    <div class="cta-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div>
+                        <h3>Stuck on a Docker & Containers concept or have an interview tomorrow?</h3>
+                        <p>Ask directly on WhatsApp, escalate your question to our lead SRE, or discuss in our community forum.</p>
+                    </div>
+                </div>
+                <div class="cta-buttons">
+                    <a href="https://wa.me/919876543210?text=Hello%20Shriram%20I%20have%20a%20doubt%20on%20Docker & Containers" target="_blank" class="cyber-btn btn-whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp Doubt
+                    </a>
+                    <a href="community.html" class="cyber-btn btn-primary">
+                        <i class="fa-solid fa-comments"></i> Community Forum
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="cyber-footer">
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <div class="cyber-logo">DEVOPS.SRE <span class="logo-tag">VAULT</span></div>
+                <p>The ultimate production-grade interview preparation platform for Cloud, DevOps, and Platform Engineers.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Topic Vaults (100+ Qs Each)</h4>
+                <div class="footer-links-grid">
+                    <a href="kubernetes.html">Kubernetes (162)</a>
+                    <a href="terraform.html">Terraform (115)</a>
+                    <a href="linux.html">Linux (104)</a>
+                    <a href="aws.html">AWS Cloud (112)</a>
+                    <a href="cicd.html">CI/CD (106)</a>
+                    <a href="networking.html">Networking (103)</a>
+                    <a href="observability.html">Observability (103)</a>
+                    <a href="security.html">DevSecOps (102)</a>
+                    <a href="scenario.html">Scenarios (107)</a>
+                </div>
+            </div>
+            <div class="footer-social">
+                <h4>Connect & Join</h4>
+                <div class="social-icons">
+                    <a href="https://discord.gg/devops-prep" target="_blank" class="social-btn discord"><i class="fa-brands fa-discord"></i></a>
+                    <a href="https://wa.me/919876543210" target="_blank" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="https://github.com" target="_blank" class="social-btn github"><i class="fa-brands fa-github"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 DevOps SRE Master Vault. Designed for 100% Interview Excellence.</p>
+        </div>
+    </footer>
+
+    <!-- Libraries -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="js/all_questions.js"></script>
+    <script src="js/cyber_app.js"></script>
+</body>
+</html>
