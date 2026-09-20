@@ -633,12 +633,12 @@ body {
    Topics Grid Section
    ========================================================================== */
 .master-topics-section {
-  padding: 4rem 0;
+  padding: 2.5rem 0;
 }
 
 .section-title-wrapper {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
 }
 
 .hud-subtitle {
@@ -1643,10 +1643,13 @@ body {
 }
 
 /* Flashcard Hub Banner */
+.master-flashcards-section {
+  padding: 1.5rem 0 1rem;
+}
 .flashcard-hub-card {
-  padding: 2.5rem;
+  padding: 2.2rem 2.5rem;
   background: linear-gradient(135deg, rgba(11, 16, 36, 0.9), rgba(17, 24, 54, 0.9));
-  margin-bottom: 3.5rem;
+  margin-bottom: 0;
 }
 .flashcard-hub-header {
   display: flex;
@@ -1656,9 +1659,14 @@ body {
   flex-wrap: wrap;
 }
 
+/* Master Contact Section */
+.master-contact-section {
+  padding: 2rem 0 3.5rem;
+}
+
 /* Doubt Escalation Banner */
 .doubt-escalation-banner {
-  margin-top: 3.5rem;
+  margin-top: 2.5rem;
 }
 .cta-card {
   padding: 2.5rem;
@@ -2403,7 +2411,7 @@ body {
 
 /* ── #1 Global Progress Dashboard on Home ───────────────────────────────── */
 .global-progress-section {
-  padding: 3rem 0;
+  padding: 2rem 0 1rem;
 }
 .progress-dashboard-grid {
   display: grid;

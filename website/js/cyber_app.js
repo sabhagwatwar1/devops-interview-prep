@@ -1526,46 +1526,44 @@ function initGlobalProgressDashboard() {
         const offset = circumference - (pct / 100) * circumference;
 
         section.innerHTML = `
-            <div class="container global-progress-section">
-                <div class="section-title-wrapper" data-aos="fade-up">
-                    <span class="hud-subtitle">YOUR JOURNEY</span>
-                    <h2 class="section-heading">Overall Mastery Dashboard</h2>
-                    <p class="section-description">Track your progress across all 12 topic vaults. Questions marked "Mastered" appear here.</p>
+            <div class="section-title-wrapper" data-aos="fade-up">
+                <span class="hud-subtitle">YOUR JOURNEY</span>
+                <h2 class="section-heading">Overall Mastery Dashboard</h2>
+                <p class="section-description">Track your progress across all 12 topic vaults. Questions marked "Mastered" appear here.</p>
+            </div>
+            <div class="progress-dashboard-grid" data-aos="fade-up">
+                <div class="progress-total-card">
+                    <div class="progress-ring-wrap">
+                        <svg width="140" height="140" viewBox="0 0 140 140">
+                            <circle class="progress-ring-track" cx="70" cy="70" r="65"/>
+                            <circle class="progress-ring-fill" id="prog-ring-fill" cx="70" cy="70" r="65" style="stroke-dashoffset:${offset}"/>
+                        </svg>
+                        <div class="progress-ring-center">
+                            <span class="progress-ring-pct">${pct}%</span>
+                            <span class="progress-ring-label">Mastered</span>
+                        </div>
+                    </div>
+                    <div class="progress-total-mastered">
+                        <strong>${totalMastered}</strong> / ${TOTAL_QUESTIONS} questions mastered
+                    </div>
+                    <button class="reset-progress-btn" onclick="resetAllProgress()">
+                        <i class="fa-solid fa-rotate-left"></i> Reset All Progress
+                    </button>
                 </div>
-                <div class="progress-dashboard-grid" data-aos="fade-up">
-                    <div class="progress-total-card">
-                        <div class="progress-ring-wrap">
-                            <svg width="140" height="140" viewBox="0 0 140 140">
-                                <circle class="progress-ring-track" cx="70" cy="70" r="65"/>
-                                <circle class="progress-ring-fill" id="prog-ring-fill" cx="70" cy="70" r="65" style="stroke-dashoffset:${offset}"/>
-                            </svg>
-                            <div class="progress-ring-center">
-                                <span class="progress-ring-pct">${pct}%</span>
-                                <span class="progress-ring-label">Mastered</span>
-                            </div>
-                        </div>
-                        <div class="progress-total-mastered">
-                            <strong>${totalMastered}</strong> / ${TOTAL_QUESTIONS} questions mastered
-                        </div>
-                        <button class="reset-progress-btn" onclick="resetAllProgress()">
-                            <i class="fa-solid fa-rotate-left"></i> Reset All Progress
-                        </button>
-                    </div>
-                    <div class="progress-topic-bars">
-                        <h4><i class="fa-solid fa-chart-bar"></i> Per-Topic Breakdown</h4>
-                        ${TOPIC_CONFIG.map(t => {
-                            const mastered = JSON.parse(localStorage.getItem(`mastered_${t.key}`) || '[]').length;
-                            const barPct = Math.round((mastered / t.total) * 100);
-                            return `
-                                <div class="topic-bar-row">
-                                    <span class="topic-bar-name">${t.label}</span>
-                                    <div class="topic-bar-bg">
-                                        <div class="topic-bar-fill" style="width:${barPct}%;background:${t.color};"></div>
-                                    </div>
-                                    <span class="topic-bar-count">${mastered}/${t.total}</span>
-                                </div>`;
-                        }).join('')}
-                    </div>
+                <div class="progress-topic-bars">
+                    <h4><i class="fa-solid fa-chart-bar"></i> Per-Topic Breakdown</h4>
+                    ${TOPIC_CONFIG.map(t => {
+                        const mastered = JSON.parse(localStorage.getItem(`mastered_${t.key}`) || '[]').length;
+                        const barPct = Math.round((mastered / t.total) * 100);
+                        return `
+                            <div class="topic-bar-row">
+                                <span class="topic-bar-name">${t.label}</span>
+                                <div class="topic-bar-bg">
+                                    <div class="topic-bar-fill" style="width:${barPct}%;background:${t.color};"></div>
+                                </div>
+                                <span class="topic-bar-count">${mastered}/${t.total}</span>
+                            </div>`;
+                    }).join('')}
                 </div>
             </div>`;
     }
