@@ -1,16 +1,23 @@
 /**
  * DEVOPS & SRE INTERVIEW PLATFORM - CYBER APP ENGINE
  * Matrix Starfield Canvas, Audio Synthesizer, Live CLI Terminal, Mastery Tracker, and 3D Flashcards
+ * + 12 Improvements: Global Search, Progress Dashboard, Mock Interview, Bookmarks, Deep-links, etc.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
     initAudioSynth();
     initCyberCanvas();
     initThemeMatrix();
+    initMobileSidebarDrawer();   // #4 — replaces old mobile nav
     initMobileNav();
     initAOSAndMermaid();
     initInteractiveRipples();
     initCard3DTilt();
+    initScrollToTop();            // #9
+    initKeyboardShortcuts();      // #3
+    initGlobalSearch();           // #2
+    initMockInterview();          // #5
+    injectGlobalUI();             // injects overlays/FABs into DOM
 
     const currentTopic = document.body.getAttribute('data-topic');
 
@@ -18,12 +25,19 @@ document.addEventListener('DOMContentLoaded', () => {
         initLiveTerminal();
         initStatsCounter();
         initMasterContactForm();
+        initGlobalProgressDashboard();  // #1
+        initTopicProgressBars();        // #10
+        initDailyReminderBanner();      // #6
     } else if (currentTopic === 'community') {
         initCommunityPortal();
     } else if (currentTopic && window.allQuestionsData && window.allQuestionsData[currentTopic]) {
         initTopicFeed(currentTopic);
+        initReadingTimeEstimate(currentTopic);  // #12
+        initDeepLink(currentTopic);             // #11
+        initDailyReminderBanner();              // #6 on topic pages too
     }
 });
+
 
 /* ==========================================================================
    1. Audio Synth Feedback (Muted by default per user preference)
@@ -436,10 +450,11 @@ function initTopicFeed(topicKey) {
 
         const filtered = allQuestions.filter(q => {
             const matchesLevel = activeFilter === 'all' || q.level === activeFilter;
+            const matchesSaved = activeFilter !== 'saved' || isQuestionBookmarked(q.id);
             const matchesSearch = !currentSearch || 
                 q.question.toLowerCase().includes(currentSearch.toLowerCase()) || 
                 q.answer.toLowerCase().includes(currentSearch.toLowerCase());
-            return matchesLevel && matchesSearch;
+            return (activeFilter === 'saved' ? matchesSaved : matchesLevel) && matchesSearch;
         });
 
         if (searchCountBadge) {
@@ -469,6 +484,8 @@ function initTopicFeed(topicKey) {
 
         attachCopyListeners();
         attachMasteryListeners(topicKey);
+        attachBookmarkListeners(topicKey, render);
+        attachShareListeners();
         updateMastery();
     }
 
@@ -514,6 +531,7 @@ function renderAccordionCard(item, isMastered) {
     const badgeClass = `badge-${item.level}`;
     const levelLabel = item.level === 'junior' ? 'Junior (0-2y)' : (item.level === 'mid' ? 'Mid-Level (2-5y)' : 'Senior / Staff (5+y)');
     const tagsHtml = (item.tags || []).map(t => `<span class="tag-pill">#${t}</span>`).join(' ');
+    const isBookmarked = isQuestionBookmarked(item.id);
 
     return `
         <div class="cyber-qa-item ${isMastered ? 'mastered-card' : ''}" id="${item.id}">
@@ -529,6 +547,14 @@ function renderAccordionCard(item, isMastered) {
                     </div>
                     <h4 class="qa-question-title">${item.question}</h4>
                 </div>
+                <div class="qa-actions-row">
+                    <button class="btn-bookmark-q ${isBookmarked ? 'bookmarked' : ''}" data-qid="${item.id}" title="${isBookmarked ? 'Remove bookmark' : 'Bookmark question'}">
+                        <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-star"></i>
+                    </button>
+                    <button class="btn-share-q" data-qid="${item.id}" title="Copy link to this question">
+                        <i class="fa-solid fa-link"></i>
+                    </button>
+                </div>
                 <i class="fa-solid fa-chevron-right qa-toggle-icon"></i>
             </div>
             <div class="qa-answer-body">
@@ -542,6 +568,7 @@ function renderAccordionCard(item, isMastered) {
         </div>
     `;
 }
+
 
 function renderFlashcardItem(item) {
     const badgeClass = `badge-${item.level}`;
@@ -895,3 +922,689 @@ function showCyberToast(msg) {
         toast.classList.remove('show');
     }, 2800);
 }
+
+/* ==========================================================================
+   IMPROVEMENTS MODULE — All 12 New Features
+   ========================================================================== */
+
+/* ── Inject Global UI Elements into DOM ────────────────────────────────── */
+function injectGlobalUI() {
+    // Scroll-to-top button
+    if (!document.getElementById('scroll-top-btn')) {
+        const btn = document.createElement('button');
+        btn.id = 'scroll-top-btn';
+        btn.setAttribute('aria-label', 'Scroll to top');
+        btn.innerHTML = '<i class="fa-solid fa-arrow-up"></i>';
+        btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+        document.body.appendChild(btn);
+    }
+
+    // Keyboard shortcut FAB
+    if (!document.getElementById('kb-help-fab')) {
+        const fab = document.createElement('button');
+        fab.id = 'kb-help-fab';
+        fab.setAttribute('aria-label', 'Keyboard shortcuts');
+        fab.textContent = '?';
+        fab.addEventListener('click', () => toggleKbOverlay(true));
+        document.body.appendChild(fab);
+    }
+
+    // Keyboard shortcuts overlay
+    if (!document.getElementById('kb-shortcuts-overlay')) {
+        const overlay = document.createElement('div');
+        overlay.id = 'kb-shortcuts-overlay';
+        overlay.innerHTML = `
+            <div class="kb-modal-box">
+                <h3><i class="fa-solid fa-keyboard"></i> Keyboard Shortcuts</h3>
+                <ul class="kb-list">
+                    <li><span class="kb-key">J</span> Next question</li>
+                    <li><span class="kb-key">K</span> Previous question</li>
+                    <li><span class="kb-key">Space</span> Expand / Collapse question</li>
+                    <li><span class="kb-key">M</span> Toggle mastered on active question</li>
+                    <li><span class="kb-key">B</span> Bookmark / unbookmark active question</li>
+                    <li><span class="kb-key">F</span> Toggle Flashcard / Accordion mode</li>
+                    <li><span class="kb-key">Ctrl K</span> Open global search</li>
+                    <li><span class="kb-key">I</span> Start mock interview</li>
+                    <li><span class="kb-key">?</span> Toggle this help overlay</li>
+                    <li><span class="kb-key">Esc</span> Close overlays</li>
+                </ul>
+                <button class="kb-close-btn" onclick="toggleKbOverlay(false)">Close</button>
+            </div>`;
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) toggleKbOverlay(false); });
+        document.body.appendChild(overlay);
+    }
+
+    // Global search overlay
+    if (!document.getElementById('global-search-overlay')) {
+        const searchOverlay = document.createElement('div');
+        searchOverlay.id = 'global-search-overlay';
+        searchOverlay.innerHTML = `
+            <div class="global-search-box">
+                <div class="global-search-input-row">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="global-search-input" placeholder="Search all 1326+ questions across 12 topics..." autocomplete="off">
+                    <button class="global-search-close" onclick="closeGlobalSearch()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="global-search-results"></div>
+                <div class="global-search-footer">
+                    <span><span class="kb-key" style="font-size:0.65rem;padding:0 4px;">↵</span> to open</span>
+                    <span><span class="kb-key" style="font-size:0.65rem;padding:0 4px;">Esc</span> to close</span>
+                    <span>Search across all topics</span>
+                </div>
+            </div>`;
+        searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) closeGlobalSearch(); });
+        document.body.appendChild(searchOverlay);
+    }
+
+    // Mock interview overlay
+    if (!document.getElementById('mock-interview-overlay')) {
+        const mockOverlay = document.createElement('div');
+        mockOverlay.id = 'mock-interview-overlay';
+        mockOverlay.innerHTML = `
+            <div class="mock-interview-card">
+                <div class="mock-progress-bar"><div class="mock-progress-fill" id="mock-prog-fill" style="width:0%"></div></div>
+                <div class="mock-header">
+                    <span class="mock-progress-text" id="mock-prog-text">Question 1 / 10</span>
+                    <button class="mock-close-btn" onclick="closeMockInterview()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div id="mock-question-area">
+                    <div class="mock-topic-badge" id="mock-q-topic">TOPIC</div>
+                    <div class="mock-question-text" id="mock-q-text">Loading...</div>
+                    <button class="mock-reveal-btn" id="mock-reveal-btn" onclick="revealMockAnswer()">
+                        <i class="fa-solid fa-eye"></i> Reveal Answer
+                    </button>
+                    <div class="mock-answer-box" id="mock-answer-box"></div>
+                    <div class="mock-rating-row" id="mock-rating-row" style="display:none;">
+                        <button class="mock-rate-btn good" onclick="rateMockAnswer('good')"><i class="fa-solid fa-check"></i> Got it!</button>
+                        <button class="mock-rate-btn ok" onclick="rateMockAnswer('ok')"><i class="fa-solid fa-minus"></i> Partial</button>
+                        <button class="mock-rate-btn bad" onclick="rateMockAnswer('bad')"><i class="fa-solid fa-xmark"></i> Missed it</button>
+                    </div>
+                </div>
+                <div id="mock-result-area" class="mock-result-screen" style="display:none;"></div>
+            </div>`;
+        document.body.appendChild(mockOverlay);
+    }
+
+    // Daily reminder banner
+    if (!document.getElementById('daily-reminder-banner')) {
+        const banner = document.createElement('div');
+        banner.id = 'daily-reminder-banner';
+        banner.innerHTML = `
+            <div class="reminder-icon">🔥</div>
+            <div class="reminder-text">
+                <strong id="reminder-title">Welcome back!</strong>
+                <span id="reminder-sub">Continue your daily prep streak.</span>
+            </div>
+            <a href="#" class="reminder-cta" id="reminder-cta-link">Continue →</a>
+            <button class="reminder-close" onclick="document.getElementById('daily-reminder-banner').classList.remove('show')">✕</button>`;
+        document.body.appendChild(banner);
+    }
+
+    // Mobile sidebar drawer
+    if (!document.getElementById('mobile-sidebar-drawer')) {
+        const sidebarOverlay = document.createElement('div');
+        sidebarOverlay.id = 'mobile-sidebar-overlay';
+        sidebarOverlay.addEventListener('click', closeSidebar);
+        document.body.appendChild(sidebarOverlay);
+
+        const drawer = document.createElement('nav');
+        drawer.id = 'mobile-sidebar-drawer';
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = [
+            { href: 'index.html', icon: 'fa-house', label: 'Home' },
+            { href: 'kubernetes.html', icon: 'fa-dharmachakra', label: 'Kubernetes' },
+            { href: 'terraform.html', icon: 'fa-cube', label: 'Terraform' },
+            { href: 'linux.html', icon: 'fa-brands fa-linux', label: 'Linux' },
+            { href: 'aws.html', icon: 'fa-brands fa-aws', label: 'AWS' },
+            { href: 'cicd.html', icon: 'fa-code-branch', label: 'CI/CD' },
+            { href: 'docker.html', icon: 'fa-brands fa-docker', label: 'Docker' },
+            { href: 'networking.html', icon: 'fa-network-wired', label: 'Networking' },
+            { href: 'git.html', icon: 'fa-brands fa-git-alt', label: 'Git' },
+            { href: 'gitops.html', icon: 'fa-arrows-spin', label: 'GitOps' },
+            { href: 'observability.html', icon: 'fa-chart-line', label: 'Observability' },
+            { href: 'security.html', icon: 'fa-shield-halved', label: 'DevSecOps' },
+            { href: 'scenario.html', icon: 'fa-users-gear', label: 'Scenarios' },
+            { href: 'community.html', icon: 'fa-comments', label: 'Community' },
+        ];
+        drawer.innerHTML = `
+            <div class="sidebar-header">
+                <span class="cyber-logo" style="font-size:1rem;">DEVOPS.SRE <span class="logo-tag">VAULT</span></span>
+                <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="sidebar-nav-links">
+                ${navLinks.map(l => `<a href="${l.href}" class="${currentPage === l.href ? 'active' : ''}"><i class="fa-solid ${l.icon}"></i> ${l.label}</a>`).join('')}
+            </div>
+            <div class="sidebar-footer">DevOps SRE Vault 2026 • 1326+ Questions</div>`;
+        document.body.appendChild(drawer);
+    }
+}
+
+/* ── #9 Scroll-to-Top ───────────────────────────────────────────────────── */
+function initScrollToTop() {
+    window.addEventListener('scroll', () => {
+        const btn = document.getElementById('scroll-top-btn');
+        if (btn) btn.classList.toggle('visible', window.scrollY > 300);
+    }, { passive: true });
+}
+
+/* ── #4 Mobile Sidebar Drawer ───────────────────────────────────────────── */
+function initMobileSidebarDrawer() {
+    // Hook the hamburger button AFTER header renders
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.cyber-mobile-toggle');
+        if (toggle) { e.preventDefault(); openSidebar(); }
+    });
+}
+function openSidebar() {
+    document.getElementById('mobile-sidebar-overlay')?.classList.add('open');
+    document.getElementById('mobile-sidebar-drawer')?.classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+    document.getElementById('mobile-sidebar-overlay')?.classList.remove('open');
+    document.getElementById('mobile-sidebar-drawer')?.classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+/* ── #3 Keyboard Shortcuts ──────────────────────────────────────────────── */
+window.toggleKbOverlay = function(open) {
+    document.getElementById('kb-shortcuts-overlay')?.classList.toggle('open', open);
+};
+
+let activeQIdx = -1;
+
+function initKeyboardShortcuts() {
+    document.addEventListener('keydown', (e) => {
+        const tag = document.activeElement.tagName.toLowerCase();
+        if (['input', 'textarea', 'select'].includes(tag)) return;
+
+        const overlay = document.getElementById('kb-shortcuts-overlay');
+        const searchOverlay = document.getElementById('global-search-overlay');
+        const mockOverlay = document.getElementById('mock-interview-overlay');
+
+        if (e.key === 'Escape') {
+            if (overlay?.classList.contains('open')) { toggleKbOverlay(false); return; }
+            if (searchOverlay?.classList.contains('open')) { closeGlobalSearch(); return; }
+            if (mockOverlay?.classList.contains('open')) { closeMockInterview(); return; }
+        }
+        if (e.key === '?') { toggleKbOverlay(true); return; }
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') { e.preventDefault(); openGlobalSearch(); return; }
+        if (e.key === 'i' || e.key === 'I') { if (!mockOverlay?.classList.contains('open')) startMockInterview(); return; }
+
+        // Topic-page navigation shortcuts
+        const cards = Array.from(document.querySelectorAll('.cyber-qa-item'));
+        if (!cards.length) return;
+
+        if (e.key === 'j' || e.key === 'J') {
+            e.preventDefault();
+            activeQIdx = Math.min(activeQIdx + 1, cards.length - 1);
+            cards[activeQIdx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (e.key === 'k' || e.key === 'K') {
+            e.preventDefault();
+            activeQIdx = Math.max(activeQIdx - 1, 0);
+            cards[activeQIdx]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else if (e.key === ' ') {
+            if (activeQIdx >= 0 && cards[activeQIdx]) {
+                e.preventDefault();
+                cards[activeQIdx].classList.toggle('active');
+            }
+        } else if (e.key === 'm' || e.key === 'M') {
+            if (activeQIdx >= 0 && cards[activeQIdx]) {
+                const chk = cards[activeQIdx].querySelector('.q-mastery-chk');
+                if (chk) { chk.checked = !chk.checked; chk.dispatchEvent(new Event('change')); }
+            }
+        } else if (e.key === 'b' || e.key === 'B') {
+            if (activeQIdx >= 0 && cards[activeQIdx]) {
+                const bBtn = cards[activeQIdx].querySelector('.btn-bookmark-q');
+                if (bBtn) bBtn.click();
+            }
+        } else if (e.key === 'f' || e.key === 'F') {
+            const modeBtn = document.getElementById(
+                document.getElementById('mode-accordion')?.classList.contains('active')
+                    ? 'mode-flashcard' : 'mode-accordion'
+            );
+            modeBtn?.click();
+        }
+    });
+}
+
+/* ── #2 Global Search ───────────────────────────────────────────────────── */
+const TOPIC_PAGE_MAP = {
+    linux: 'linux.html', git: 'git.html', cicd: 'cicd.html',
+    docker: 'docker.html', kubernetes: 'kubernetes.html',
+    terraform: 'terraform.html', aws: 'aws.html',
+    networking: 'networking.html', gitops: 'gitops.html',
+    observability: 'observability.html', security: 'security.html',
+    scenario: 'scenario.html'
+};
+
+function openGlobalSearch() {
+    const overlay = document.getElementById('global-search-overlay');
+    overlay?.classList.add('open');
+    setTimeout(() => document.getElementById('global-search-input')?.focus(), 50);
+}
+function closeGlobalSearch() {
+    document.getElementById('global-search-overlay')?.classList.remove('open');
+    const inp = document.getElementById('global-search-input');
+    if (inp) inp.value = '';
+    const res = document.getElementById('global-search-results');
+    if (res) res.innerHTML = '';
+}
+window.closeGlobalSearch = closeGlobalSearch;
+
+function highlightMatch(text, query) {
+    if (!query) return text;
+    const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+}
+
+function initGlobalSearch() {
+    // Wire nav search trigger (added dynamically)
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#global-search-trigger')) openGlobalSearch();
+    });
+
+    document.addEventListener('input', (e) => {
+        if (e.target.id !== 'global-search-input') return;
+        const query = e.target.value.trim();
+        const resultsEl = document.getElementById('global-search-results');
+        if (!resultsEl) return;
+
+        if (!query || query.length < 2) {
+            resultsEl.innerHTML = '<div class="gsearch-empty"><i class="fa-solid fa-magnifying-glass"></i><br>Type at least 2 characters to search</div>';
+            return;
+        }
+
+        const data = window.allQuestionsData;
+        if (!data) { resultsEl.innerHTML = '<div class="gsearch-empty">Questions data not loaded</div>'; return; }
+
+        const results = [];
+        const q = query.toLowerCase();
+        for (const [topic, questions] of Object.entries(data)) {
+            for (const item of questions) {
+                if (item.question.toLowerCase().includes(q) || item.answer.toLowerCase().includes(q)) {
+                    results.push({ topic, item });
+                    if (results.length >= 30) break;
+                }
+            }
+            if (results.length >= 30) break;
+        }
+
+        if (results.length === 0) {
+            resultsEl.innerHTML = `<div class="gsearch-empty">No results for "<strong>${escapeHtml(query)}</strong>"</div>`;
+            return;
+        }
+
+        resultsEl.innerHTML = results.map(({ topic, item }) => {
+            const page = TOPIC_PAGE_MAP[topic] || `${topic}.html`;
+            const highlighted = highlightMatch(escapeHtml(item.question), query);
+            return `<div class="gsearch-result-item" onclick="window.location.href='${page}?q=${item.id}'">
+                <div class="gsearch-result-topic">${topic.toUpperCase()}</div>
+                <div class="gsearch-result-q">${highlighted}</div>
+            </div>`;
+        }).join('');
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && document.getElementById('global-search-overlay')?.classList.contains('open')) {
+            const firstResult = document.querySelector('.gsearch-result-item');
+            if (firstResult) firstResult.click();
+        }
+    });
+}
+
+/* ── Add global search trigger to navbars ───────────────────────────────── */
+(function addSearchTriggerToNav() {
+    document.addEventListener('DOMContentLoaded', () => {
+        const navControls = document.querySelector('.nav-controls');
+        if (navControls && !document.getElementById('global-search-trigger')) {
+            const trigger = document.createElement('button');
+            trigger.id = 'global-search-trigger';
+            trigger.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> Search <span class="kb-badge">⌃K</span>';
+            navControls.prepend(trigger);
+
+            // Mock interview button
+            const mockBtn = document.createElement('button');
+            mockBtn.id = 'mock-interview-nav-btn';
+            mockBtn.innerHTML = '<i class="fa-solid fa-brain"></i> Mock Interview';
+            mockBtn.addEventListener('click', startMockInterview);
+            navControls.prepend(mockBtn);
+        }
+    });
+})();
+
+/* ── #5 Mock Interview Mode ─────────────────────────────────────────────── */
+let mockQuestions = [];
+let mockIdx = 0;
+let mockScores = { good: 0, ok: 0, bad: 0 };
+
+function initMockInterview() {
+    // Just ensures overlay exists (created in injectGlobalUI)
+}
+
+function startMockInterview() {
+    const data = window.allQuestionsData;
+    if (!data) { showCyberToast('Questions not loaded yet'); return; }
+
+    // Pick 10 random questions from across all topics
+    const allQ = Object.entries(data).flatMap(([topic, qs]) => qs.map(q => ({ ...q, _topic: topic })));
+    mockQuestions = allQ.sort(() => Math.random() - 0.5).slice(0, 10);
+    mockIdx = 0;
+    mockScores = { good: 0, ok: 0, bad: 0 };
+
+    document.getElementById('mock-interview-overlay')?.classList.add('open');
+    loadMockQuestion();
+}
+window.startMockInterview = startMockInterview;
+
+function loadMockQuestion() {
+    const q = mockQuestions[mockIdx];
+    if (!q) return;
+
+    const pct = (mockIdx / mockQuestions.length) * 100;
+    document.getElementById('mock-prog-fill').style.width = pct + '%';
+    document.getElementById('mock-prog-text').textContent = `Question ${mockIdx + 1} / ${mockQuestions.length}`;
+    document.getElementById('mock-q-topic').textContent = (q._topic || '').toUpperCase();
+    document.getElementById('mock-q-text').textContent = q.question;
+
+    const answerBox = document.getElementById('mock-answer-box');
+    answerBox.innerHTML = q.answer;
+    answerBox.classList.remove('visible');
+
+    document.getElementById('mock-reveal-btn').style.display = 'block';
+    document.getElementById('mock-rating-row').style.display = 'none';
+    document.getElementById('mock-question-area').style.display = 'block';
+    document.getElementById('mock-result-area').style.display = 'none';
+}
+
+window.revealMockAnswer = function() {
+    document.getElementById('mock-answer-box').classList.add('visible');
+    document.getElementById('mock-reveal-btn').style.display = 'none';
+    document.getElementById('mock-rating-row').style.display = 'flex';
+};
+
+window.rateMockAnswer = function(rating) {
+    mockScores[rating]++;
+    mockIdx++;
+    if (mockIdx >= mockQuestions.length) {
+        showMockResult();
+    } else {
+        loadMockQuestion();
+    }
+};
+
+function showMockResult() {
+    const total = mockQuestions.length;
+    const score = mockScores.good;
+    const pct = Math.round((score / total) * 100);
+    const grade = pct >= 80 ? '🎉 Excellent!' : pct >= 60 ? '👍 Good Progress!' : '💪 Keep Practicing!';
+
+    document.getElementById('mock-prog-fill').style.width = '100%';
+    document.getElementById('mock-question-area').style.display = 'none';
+    document.getElementById('mock-result-area').style.display = 'block';
+    document.getElementById('mock-result-area').innerHTML = `
+        <div class="mock-result-screen">
+            <div class="mock-score-big">${pct}%</div>
+            <h3>${grade}</h3>
+            <p>You got <strong>${score} / ${total}</strong> questions right<br>
+               <span style="color:var(--neon-green);">✓ ${mockScores.good} Confident</span> &nbsp;
+               <span style="color:#fbbf24;">~ ${mockScores.ok} Partial</span> &nbsp;
+               <span style="color:#f87171;">✗ ${mockScores.bad} Missed</span>
+            </p>
+            <button class="mock-restart-btn" onclick="startMockInterview()">Try Again</button>
+            <button style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--text-muted);padding:0.7rem 1.5rem;border-radius:10px;cursor:pointer;" onclick="closeMockInterview()">Close</button>
+        </div>`;
+}
+
+window.closeMockInterview = function() {
+    document.getElementById('mock-interview-overlay')?.classList.remove('open');
+};
+
+/* ── #6 Daily Revision Reminder ─────────────────────────────────────────── */
+function initDailyReminderBanner() {
+    const today = new Date().toDateString();
+    const lastVisit = localStorage.getItem('devops_vault_last_visit');
+    const lastTopic = localStorage.getItem('devops_vault_last_topic');
+
+    localStorage.setItem('devops_vault_last_visit', today);
+
+    // Store current topic
+    const curTopic = document.body.getAttribute('data-topic');
+    if (curTopic && curTopic !== 'hub' && curTopic !== 'community') {
+        localStorage.setItem('devops_vault_last_topic', curTopic);
+    }
+
+    if (!lastVisit || lastVisit === today) return; // First visit today — skip
+
+    const banner = document.getElementById('daily-reminder-banner');
+    if (!banner) return;
+
+    const daysSince = Math.round((new Date(today) - new Date(lastVisit)) / 86400000);
+    const title = daysSince <= 1 ? 'Welcome back! 🔥 Day streak!' : `Welcome back after ${daysSince} days!`;
+    const sub = lastTopic
+        ? `Pick up where you left off — ${lastTopic.charAt(0).toUpperCase() + lastTopic.slice(1)}`
+        : 'Continue your DevOps interview prep today';
+    const ctaHref = lastTopic ? `${TOPIC_PAGE_MAP[lastTopic] || lastTopic + '.html'}` : '#topics-grid';
+
+    document.getElementById('reminder-title').textContent = title;
+    document.getElementById('reminder-sub').textContent = sub;
+    document.getElementById('reminder-cta-link').href = ctaHref;
+
+    setTimeout(() => banner.classList.add('show'), 800);
+    setTimeout(() => banner.classList.remove('show'), 8000);
+}
+
+/* ── #12 Reading Time Estimate ──────────────────────────────────────────── */
+function initReadingTimeEstimate(topicKey) {
+    const statsBar = document.querySelector('.topic-stats-bar');
+    if (!statsBar) return;
+
+    const questions = (window.allQuestionsData || {})[topicKey] || [];
+    const avgWordsPerQ = 60;
+    const totalWords = questions.length * avgWordsPerQ;
+    const minutes = Math.round(totalWords / 200);
+
+    const pill = document.createElement('div');
+    pill.className = 'stat-pill reading-time-pill';
+    pill.innerHTML = `<i class="fa-solid fa-clock"></i> ~${minutes} min read`;
+    statsBar.appendChild(pill);
+}
+
+/* ── #11 Deep-link / Share a Question ───────────────────────────────────── */
+function initDeepLink(topicKey) {
+    const params = new URLSearchParams(window.location.search);
+    const targetId = params.get('q');
+    if (!targetId) return;
+
+    // Wait for render to complete then open target
+    setTimeout(() => {
+        const el = document.getElementById(targetId);
+        if (!el) return;
+        el.classList.add('active', 'deeplink-highlight');
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        setTimeout(() => el.classList.remove('deeplink-highlight'), 3000);
+    }, 600);
+}
+
+/* ── #8 Bookmark (Star) Questions ───────────────────────────────────────── */
+function isQuestionBookmarked(qid) {
+    const saved = JSON.parse(localStorage.getItem('devops_vault_bookmarks') || '[]');
+    return saved.includes(qid);
+}
+
+function attachBookmarkListeners(topicKey, renderFn) {
+    document.querySelectorAll('.btn-bookmark-q').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const qid = btn.getAttribute('data-qid');
+            let saved = JSON.parse(localStorage.getItem('devops_vault_bookmarks') || '[]');
+            const isNowBookmarked = !saved.includes(qid);
+
+            if (isNowBookmarked) {
+                saved.push(qid);
+                showCyberToast('Question bookmarked ⭐');
+            } else {
+                saved = saved.filter(id => id !== qid);
+                showCyberToast('Bookmark removed');
+            }
+            localStorage.setItem('devops_vault_bookmarks', JSON.stringify(saved));
+
+            // Update button immediately
+            btn.className = `btn-bookmark-q ${isNowBookmarked ? 'bookmarked' : ''}`;
+            btn.title = isNowBookmarked ? 'Remove bookmark' : 'Bookmark question';
+            btn.innerHTML = `<i class="fa-${isNowBookmarked ? 'solid' : 'regular'} fa-star"></i>`;
+
+            // Update saved count badge
+            const savedCountEl = document.getElementById('saved-count');
+            if (savedCountEl) savedCountEl.textContent = saved.length;
+
+            // If in 'saved' filter mode, re-render
+            if (typeof activeFilter !== 'undefined' && activeFilter === 'saved') renderFn();
+        });
+    });
+
+    // Update saved count on load
+    const savedCountEl = document.getElementById('saved-count');
+    if (savedCountEl) {
+        const saved = JSON.parse(localStorage.getItem('devops_vault_bookmarks') || '[]');
+        savedCountEl.textContent = saved.length;
+    }
+}
+
+function attachShareListeners() {
+    document.querySelectorAll('.btn-share-q').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const qid = btn.getAttribute('data-qid');
+            const url = `${window.location.origin}${window.location.pathname}?q=${qid}`;
+            navigator.clipboard.writeText(url).then(() => {
+                showCyberToast('Question link copied to clipboard 🔗');
+            }).catch(() => {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                ta.style.position = 'fixed'; ta.style.opacity = '0';
+                document.body.appendChild(ta); ta.select();
+                document.execCommand('copy'); document.body.removeChild(ta);
+                showCyberToast('Question link copied 🔗');
+            });
+        });
+    });
+}
+
+/* ── #1 Global Progress Dashboard (Home page) ───────────────────────────── */
+const TOPIC_CONFIG = [
+    { key: 'linux',        label: 'Linux',          total: 104, color: '#00ff88' },
+    { key: 'git',          label: 'Git',             total: 104, color: '#f34f29' },
+    { key: 'cicd',         label: 'CI/CD',           total: 106, color: '#00d4ff' },
+    { key: 'docker',       label: 'Docker',          total: 106, color: '#2496ed' },
+    { key: 'kubernetes',   label: 'Kubernetes',      total: 162, color: '#326ce5' },
+    { key: 'terraform',    label: 'Terraform',       total: 115, color: '#844fba' },
+    { key: 'aws',          label: 'AWS',             total: 112, color: '#ff9900' },
+    { key: 'networking',   label: 'Networking',      total: 103, color: '#00d4ff' },
+    { key: 'gitops',       label: 'GitOps',          total: 102, color: '#ef6b73' },
+    { key: 'observability',label: 'Observability',   total: 103, color: '#00ff88' },
+    { key: 'security',     label: 'Security',        total: 102, color: '#a855f7' },
+    { key: 'scenario',     label: 'Scenarios',       total: 107, color: '#facc15' },
+];
+const TOTAL_QUESTIONS = 1326;
+
+function initGlobalProgressDashboard() {
+    const section = document.getElementById('global-progress-section');
+    if (!section) return;
+
+    function getTotalMastered() {
+        return TOPIC_CONFIG.reduce((sum, t) => {
+            const m = JSON.parse(localStorage.getItem(`mastered_${t.key}`) || '[]');
+            return sum + m.length;
+        }, 0);
+    }
+
+    function renderDashboard() {
+        const totalMastered = getTotalMastered();
+        const pct = Math.round((totalMastered / TOTAL_QUESTIONS) * 100);
+        const circumference = 408;
+        const offset = circumference - (pct / 100) * circumference;
+
+        section.innerHTML = `
+            <div class="container global-progress-section">
+                <div class="section-title-wrapper" data-aos="fade-up">
+                    <span class="hud-subtitle">YOUR JOURNEY</span>
+                    <h2 class="section-heading">Overall Mastery Dashboard</h2>
+                    <p class="section-description">Track your progress across all 12 topic vaults. Questions marked "Mastered" appear here.</p>
+                </div>
+                <div class="progress-dashboard-grid" data-aos="fade-up">
+                    <div class="progress-total-card">
+                        <div class="progress-ring-wrap">
+                            <svg width="140" height="140" viewBox="0 0 140 140">
+                                <circle class="progress-ring-track" cx="70" cy="70" r="65"/>
+                                <circle class="progress-ring-fill" id="prog-ring-fill" cx="70" cy="70" r="65" style="stroke-dashoffset:${offset}"/>
+                            </svg>
+                            <div class="progress-ring-center">
+                                <span class="progress-ring-pct">${pct}%</span>
+                                <span class="progress-ring-label">Mastered</span>
+                            </div>
+                        </div>
+                        <div class="progress-total-mastered">
+                            <strong>${totalMastered}</strong> / ${TOTAL_QUESTIONS} questions mastered
+                        </div>
+                        <button class="reset-progress-btn" onclick="resetAllProgress()">
+                            <i class="fa-solid fa-rotate-left"></i> Reset All Progress
+                        </button>
+                    </div>
+                    <div class="progress-topic-bars">
+                        <h4><i class="fa-solid fa-chart-bar"></i> Per-Topic Breakdown</h4>
+                        ${TOPIC_CONFIG.map(t => {
+                            const mastered = JSON.parse(localStorage.getItem(`mastered_${t.key}`) || '[]').length;
+                            const barPct = Math.round((mastered / t.total) * 100);
+                            return `
+                                <div class="topic-bar-row">
+                                    <span class="topic-bar-name">${t.label}</span>
+                                    <div class="topic-bar-bg">
+                                        <div class="topic-bar-fill" style="width:${barPct}%;background:${t.color};"></div>
+                                    </div>
+                                    <span class="topic-bar-count">${mastered}/${t.total}</span>
+                                </div>`;
+                        }).join('')}
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    renderDashboard();
+}
+
+window.resetAllProgress = function() {
+    if (!confirm('Reset ALL mastery progress across all topics? This cannot be undone.')) return;
+    TOPIC_CONFIG.forEach(t => localStorage.removeItem(`mastered_${t.key}`));
+    showCyberToast('All progress reset');
+    initGlobalProgressDashboard();
+};
+
+/* ── #10 Topic Progress Bars on Home Vault Cards ────────────────────────── */
+function initTopicProgressBars() {
+    document.querySelectorAll('.topic-vault-card').forEach(card => {
+        const href = card.getAttribute('href') || '';
+        const topicKey = Object.entries(TOPIC_PAGE_MAP).find(([k, v]) => v === href)?.[0];
+        if (!topicKey) return;
+
+        const topicConf = TOPIC_CONFIG.find(t => t.key === topicKey);
+        if (!topicConf) return;
+
+        const mastered = JSON.parse(localStorage.getItem(`mastered_${topicKey}`) || '[]').length;
+        const total = topicConf.total;
+        const pct = total > 0 ? Math.round((mastered / total) * 100) : 0;
+
+        const footer = card.querySelector('.vault-footer');
+        if (!footer) return;
+
+        const progressHtml = `
+            <div class="vault-progress-wrap">
+                <div class="vault-progress-bar-bg">
+                    <div class="vault-progress-bar-fill" style="width:${pct}%;background:${topicConf.color};"></div>
+                </div>
+                <div class="vault-progress-label">${mastered} / ${total} mastered (${pct}%)</div>
+            </div>`;
+        footer.insertAdjacentHTML('afterend', progressHtml);
+    });
+}
+
