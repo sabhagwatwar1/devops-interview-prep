@@ -107,9 +107,11 @@
                     <span class="search-count-badge" id="search-count-badge">102 / 102</span>
                 </div>
                 
-                <button class="btn-cyber btn-primary" onclick="openTopicQuiz('gitops')" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;"><i class="fa-solid fa-brain"></i> Take Quiz</button>
-                    <button class="export-mastered-btn" onclick="window.print()" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;"><i class="fa-solid fa-print"></i> Print/Export</button>
-                    <div class="view-mode-toggle">
+                <div class="export-btn-group" style="display:inline-flex;gap:0.4rem;">
+                    <button class="export-mastered-btn" onclick="window.print()" title="Print / Save PDF"><i class="fa-solid fa-print"></i> Print / PDF</button>
+                    <button class="export-mastered-btn export-md-btn" onclick="exportTopicMarkdown()" title="Download Markdown Sheet"><i class="fa-solid fa-file-arrow-down"></i> Export .MD</button>
+                </div>
+                <div class="view-mode-toggle">
                     <button id="mode-accordion" class="mode-btn active" title="Accordion View"><i class="fa-solid fa-bars"></i> Accordion</button>
                     <button id="mode-flashcard" class="mode-btn" title="Flashcard Flip Mode"><i class="fa-solid fa-clone"></i> 3D Flashcards</button>
                 </div>

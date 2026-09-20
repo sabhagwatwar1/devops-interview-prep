@@ -1608,3 +1608,54 @@ function initTopicProgressBars() {
     });
 }
 
+/* ── Markdown / Cheatsheet File Exporter ─────────────────────────────────── */
+function exportTopicMarkdown(topicKey) {
+    const topic = topicKey || document.body.getAttribute('data-topic');
+    if (!topic || !window.allQuestionsData || !window.allQuestionsData[topic]) {
+        // Fallback to window.print if not on a topic page
+        window.print();
+        return;
+    }
+    const questions = window.allQuestionsData[topic];
+    const topicTitle = topic.charAt(0).toUpperCase() + topic.slice(1);
+    
+    let md = `# DevOps & SRE Interview Cheatsheet: ${topicTitle} Vault\n`;
+    md += `*Generated from DevOps & SRE Interview Preparation Platform | Total Questions: ${questions.length}*\n\n`;
+    md += `---\n\n`;
+    
+    questions.forEach((q, idx) => {
+        const levelBadge = q.level ? `[${q.level.toUpperCase()}]` : '';
+        // Clean up simple html tags for markdown readability
+        const cleanAnswer = q.answer
+            .replace(/<pre><code[^>]*>([\s\S]*?)<\/code><\/pre>/gi, '\n```\n$1\n```\n')
+            .replace(/<code>(.*?)<\/code>/gi, '`$1`')
+            .replace(/<strong>(.*?)<\/strong>/gi, '**$1**')
+            .replace(/<em>(.*?)<\/em>/gi, '*$1*')
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<p>/gi, '')
+            .replace(/<\/p>/gi, '\n\n')
+            .replace(/<[^>]+>/g, '');
+
+        md += `### Q${idx + 1}. ${q.question} ${levelBadge}\n\n`;
+        md += `${cleanAnswer.trim()}\n\n`;
+        if (q.tags && q.tags.length) {
+            md += `*Tags: ${q.tags.map(t => '#' + t).join(' ')}*\n\n`;
+        }
+        md += `---\n\n`;
+    });
+    
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `${topic}-devops-sre-interview-prep.md`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    showCyberToast(`Exported ${questions.length} questions to Markdown! 📄`);
+}
+
+window.exportTopicMarkdown = exportTopicMarkdown;
+window.exportCurrentTopicMarkdown = exportTopicMarkdown;
+

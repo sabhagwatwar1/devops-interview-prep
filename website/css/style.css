@@ -979,13 +979,17 @@ body {
   position: relative;
   flex-grow: 1;
   max-width: 480px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .search-box-wrapper input {
-  width: 100%;
+  flex: 1;
+  min-width: 0;
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid var(--glass-border);
-  padding: 0.65rem 3rem 0.65rem 2.5rem;
+  padding: 0.65rem 0.75rem 0.65rem 2.5rem;
   border-radius: 8px;
   color: #fff;
   font-family: var(--font-sans);
@@ -1005,19 +1009,22 @@ body {
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-muted);
+  pointer-events: none;
 }
 
+/* Count badge moved OUTSIDE the input — sits to the right as a sibling */
 .search-count-badge {
-  position: absolute;
-  right: 0.75rem;
-  top: 50%;
-  transform: translateY(-50%);
+  position: static;
+  transform: none;
+  flex-shrink: 0;
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 0.15rem 0.45rem;
-  border-radius: 4px;
+  font-size: 0.72rem;
+  background: rgba(0, 240, 255, 0.07);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  padding: 0.2rem 0.5rem;
+  border-radius: 5px;
   color: var(--text-muted);
+  white-space: nowrap;
 }
 
 .view-mode-toggle {
@@ -2789,6 +2796,11 @@ body {
 
 /* ── #7 Export / Print Stylesheet ──────────────────────────────────────── */
 @media print {
+  @page {
+    margin: 1.5cm;
+    size: auto;
+  }
+
   .cyber-navbar, .cyber-footer, .toolbar-section,
   #scroll-top-btn, #kb-help-fab, #global-search-overlay,
   #mock-interview-overlay, #mobile-sidebar-drawer,
@@ -2796,15 +2808,147 @@ body {
   #kb-shortcuts-overlay, .copy-code-hud-btn,
   .btn-bookmark-q, .btn-share-q, .btn-tts-listen,
   .doubt-escalation-banner, .cyber-grid-overlay,
-  .hero-cta-group, canvas { display: none !important; }
+  .hero-cta-group, .mastered-checkbox-wrap,
+  .qa-toggle-icon, .qa-actions-row, canvas,
+  .view-mode-toggle { display: none !important; }
 
-  body { background: #fff !important; color: #000 !important; font-size: 11pt; }
-  .cyber-qa-item { border: 1px solid #ddd !important; border-radius: 4px; margin-bottom: 12pt; page-break-inside: avoid; }
-  .qa-answer-body { visibility: visible !important; height: auto !important; max-height: none !important; }
-  .qa-answer-inner { max-height: none !important; }
-  pre, code { background: #f4f4f4 !important; color: #000 !important; font-size: 9pt; }
-  .badge-level { border: 1px solid #666 !important; color: #333 !important; }
+  body { 
+    background: #ffffff !important; 
+    color: #111827 !important; 
+    font-size: 10.5pt !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  }
+
+  .topic-hero-banner {
+    padding: 1rem 0 !important;
+    border-bottom: 2px solid #0f172a !important;
+    margin-bottom: 1.5rem !important;
+  }
+  .topic-page-title {
+    color: #0f172a !important;
+    font-size: 1.6rem !important;
+  }
+  .topic-page-desc {
+    color: #475569 !important;
+    font-size: 0.95rem !important;
+  }
+  .topic-stats-bar {
+    display: flex !important;
+    gap: 0.5rem !important;
+    margin-top: 0.5rem !important;
+  }
+  .stat-pill {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+    font-size: 8pt !important;
+    padding: 0.2rem 0.5rem !important;
+  }
+
+  .cyber-qa-item { 
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important; 
+    border-radius: 6px !important; 
+    margin-bottom: 14pt !important; 
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-shadow: none !important;
+  }
+
+  .qa-header-row {
+    background: #f8fafc !important;
+    padding: 0.75rem 1rem !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .qa-question-title {
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    margin-top: 0.25rem !important;
+  }
+
+  .qa-answer-body { 
+    display: block !important;
+    visibility: visible !important; 
+    height: auto !important; 
+    max-height: none !important; 
+    overflow: visible !important;
+    background: #ffffff !important;
+    border-top: none !important;
+  }
+
+  .qa-answer-inner { 
+    padding: 0.9rem 1rem !important;
+    max-height: none !important; 
+    color: #1e293b !important;
+    font-size: 10pt !important;
+    line-height: 1.65 !important;
+  }
+
+  pre, code { 
+    background: #f8fafc !important; 
+    color: #0f172a !important; 
+    font-size: 8.5pt !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 4px !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+  pre {
+    padding: 0.75rem !important;
+    margin: 0.5rem 0 !important;
+  }
+
+  .badge-level { 
+    border: 1px solid #94a3b8 !important; 
+    color: #334155 !important; 
+    background: #f1f5f9 !important;
+    font-size: 7.5pt !important;
+  }
+
+  .q-source-tag, .tag-pill {
+    border: 1px solid #cbd5e1 !important;
+    color: #64748b !important;
+    background: #f8fafc !important;
+    font-size: 7.5pt !important;
+  }
+
+  /* Handle Flashcard Grid in Print Mode */
+  .flashcards-grid-view {
+    display: block !important;
+  }
+  .flashcard-3d {
+    perspective: none !important;
+    height: auto !important;
+    margin-bottom: 12pt !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+  .flashcard-inner {
+    transform: none !important;
+    position: static !important;
+    height: auto !important;
+  }
+  .flashcard-front, .flashcard-back {
+    position: static !important;
+    transform: none !important;
+    backface-visibility: visible !important;
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    padding: 0.85rem !important;
+    color: #0f172a !important;
+    height: auto !important;
+  }
+  .flashcard-back {
+    margin-top: 0.4rem !important;
+    border-top: 1px dashed #cbd5e1 !important;
+    background: #f8fafc !important;
+  }
+  .flip-hint { display: none !important; }
 }
+
 /* Export button on toolbar */
 .export-mastered-btn {
   display: inline-flex;
@@ -2820,6 +2964,18 @@ body {
   transition: all 0.2s;
   font-family: var(--font-mono);
 }
-.export-mastered-btn:hover { background: rgba(168,85,247,0.2); }
+.export-mastered-btn:hover { 
+  background: rgba(168,85,247,0.22);
+  color: #fff;
+}
+.export-md-btn {
+  background: rgba(0, 240, 255, 0.1);
+  border-color: rgba(0, 240, 255, 0.3);
+  color: var(--neon-cyan);
+}
+.export-md-btn:hover {
+  background: rgba(0, 240, 255, 0.22);
+  color: #fff;
+}
 
 
