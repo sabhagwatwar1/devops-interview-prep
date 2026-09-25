@@ -790,9 +790,13 @@ function initCommunityPortal() {
     const feed = document.getElementById('community-feed-container');
     const countBadge = document.getElementById('comm-count-badge');
 
-    if (!localStorage.getItem('cyber_community_posts')) {
-        localStorage.setItem('cyber_community_posts', JSON.stringify(DEFAULT_COMMUNITY_FEED));
+    let storedPosts = JSON.parse(localStorage.getItem('cyber_community_posts') || 'null');
+    if (!storedPosts) {
+        storedPosts = DEFAULT_COMMUNITY_FEED;
     }
+    // Automatically purge any statefulset forum post
+    storedPosts = storedPosts.filter(p => !(p.question || '').toLowerCase().includes('statefulset'));
+    localStorage.setItem('cyber_community_posts', JSON.stringify(storedPosts));
 
     function renderFeed() {
         const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
@@ -814,9 +818,14 @@ function initCommunityPortal() {
                             <div style="font-size: 0.75rem; color: var(--text-muted);">${post.timestamp} &bull; <span class="hud-tag">${post.tag}</span></div>
                         </div>
                     </div>
-                    <button class="comm-upvote-btn" onclick="upvotePost('${post.id}')">
-                        <i class="fa-solid fa-thumbs-up"></i> ${post.upvotes}
-                    </button>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <button class="comm-upvote-btn" onclick="upvotePost('${post.id}')" title="Upvote">
+                            <i class="fa-solid fa-thumbs-up"></i> ${post.upvotes}
+                        </button>
+                        <button class="comm-delete-btn" onclick="deletePost('${post.id}')" title="Delete question">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
                 </div>
                 <div style="font-size: 1.05rem; font-weight: 600; color: #fff;">
                     ${escapeHtml(post.question)}
@@ -868,6 +877,14 @@ function initCommunityPortal() {
 
     renderFeed();
 }
+
+window.deletePost = function(postId) {
+    let posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
+    posts = posts.filter(p => p.id !== postId);
+    localStorage.setItem('cyber_community_posts', JSON.stringify(posts));
+    initCommunityPortal();
+    showCyberToast('Question deleted from forum');
+};
 
 window.upvotePost = function(postId) {
     const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
