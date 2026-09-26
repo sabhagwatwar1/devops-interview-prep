@@ -2078,6 +2078,257 @@ body {
   color: #ef4444;
 }
 
+/* TTS Animated Wave Bars */
+.tts-wave-bars {
+  display: none;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+  width: 12px;
+}
+.btn-tts-listen.playing .tts-wave-bars {
+  display: inline-flex;
+}
+.btn-tts-listen.playing i {
+  display: none;
+}
+.wb-bar {
+  width: 2px;
+  height: 100%;
+  background: currentColor;
+  border-radius: 1px;
+  animation: waveBarBounce 0.8s ease-in-out infinite alternate;
+}
+.wb-bar:nth-child(1) { animation-delay: 0s; height: 40%; }
+.wb-bar:nth-child(2) { animation-delay: 0.2s; height: 100%; }
+.wb-bar:nth-child(3) { animation-delay: 0.4s; height: 60%; }
+
+@keyframes waveBarBounce {
+  0% { transform: scaleY(0.3); }
+  100% { transform: scaleY(1); }
+}
+
+/* ── 2-Minute Interview Drill Timer Button & HUD ────────────────────────── */
+.btn-timer-toggle {
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  color: #f59e0b;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s ease;
+}
+.btn-timer-toggle:hover {
+  background: rgba(245, 158, 11, 0.22);
+  color: #fff;
+}
+.btn-timer-toggle.active {
+  background: rgba(245, 158, 11, 0.25);
+  border-color: #f59e0b;
+  color: #fbbf24;
+}
+
+.drill-timer-hud {
+  display: none;
+  background: rgba(4, 8, 22, 0.95);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  padding: 0.85rem 1.25rem;
+  margin: 0.75rem 1.5rem 0;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  animation: timerSlide 0.25s ease forwards;
+}
+.drill-timer-hud.open {
+  display: flex;
+}
+@keyframes timerSlide {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.drill-timer-dial {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.drill-timer-dial svg {
+  transform: rotate(-90deg);
+}
+.timer-dial-track {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.08);
+  stroke-width: 3.5;
+}
+.timer-dial-bar {
+  fill: none;
+  stroke: var(--neon-cyan);
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 113.1;
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.4s ease;
+}
+.drill-timer-dial.warn .timer-dial-bar {
+  stroke: #f59e0b;
+}
+.drill-timer-dial.danger .timer-dial-bar {
+  stroke: #ef4444;
+  animation: pulseDial 0.8s ease-in-out infinite alternate;
+}
+@keyframes pulseDial {
+  from { filter: drop-shadow(0 0 2px #ef4444); }
+  to { filter: drop-shadow(0 0 8px #ef4444); }
+}
+
+.timer-dial-num {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+}
+.drill-timer-meta {
+  flex: 1;
+}
+.drill-timer-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #f59e0b;
+  letter-spacing: 0.05em;
+  margin-bottom: 2px;
+}
+.drill-timer-status {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+.drill-timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.btn-drill-action {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--text-main);
+  padding: 0.35rem 0.65rem;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.btn-drill-action:hover {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+}
+.btn-drill-action.start.running {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #f87171;
+}
+.btn-drill-action.close {
+  color: var(--text-muted);
+  border-color: transparent;
+}
+.btn-drill-action.close:hover {
+  color: #fff;
+}
+
+/* ── Sub-Topic Fast-Jump Chips Bar ──────────────────────────────────────── */
+.topic-subchips-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding: 0.5rem 0 1rem;
+  margin-bottom: 1.25rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 240, 255, 0.2) transparent;
+}
+.topic-subchips-bar::-webkit-scrollbar {
+  height: 4px;
+}
+.topic-subchips-bar::-webkit-scrollbar-thumb {
+  background: rgba(0, 240, 255, 0.2);
+  border-radius: 4px;
+}
+.subchip-btn {
+  background: rgba(11, 16, 36, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  padding: 0.35rem 0.85rem;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.subchip-btn:hover {
+  border-color: rgba(0, 240, 255, 0.35);
+  color: var(--text-main);
+  background: rgba(0, 240, 255, 0.05);
+}
+.subchip-btn.active {
+  background: rgba(0, 240, 255, 0.15);
+  border-color: var(--neon-cyan);
+  color: var(--neon-cyan);
+  font-weight: 600;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+}
+
+/* ── Cyber Confetti Canvas ──────────────────────────────────────────────── */
+#cyber-confetti-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 10500;
+}
+
+/* ── PWA Install Buttons ────────────────────────────────────────────────── */
+#pwa-install-nav-btn {
+  display: none;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(168, 85, 247, 0.12);
+  border: 1px solid rgba(168, 85, 247, 0.35);
+  color: #c084fc;
+  padding: 0.35rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+#pwa-install-nav-btn:hover {
+  background: rgba(168, 85, 247, 0.25);
+  box-shadow: 0 0 12px rgba(168, 85, 247, 0.3);
+  color: #fff;
+}
+#pwa-install-nav-btn.visible {
+  display: inline-flex;
+}
+
+
 /* ==========================================================================
    IMPROVEMENTS BLOCK — All 12 New Features
    ========================================================================== */

@@ -5326,6 +5326,18 @@ window.allQuestionsData = {
       ]
     },
     {
+      "id": "k100_11",
+      "question": "What is a StatefulSet and when would you use it?",
+      "answer": "o Answer: A StatefulSet is a workload API object used to manage stateful\napplications. Unlike Deployments, StatefulSets provide:\n▪ Stable, unique network identifiers: Each Pod gets a stable\nhostname.\n▪ Stable, persistent storage: PersistentVolumes are provisioned for\neach Pod.\n▪ Ordered, graceful deployment and scaling: Pods are created and\nterminated in a defined order.\n▪ Ordered, graceful deletion: Pods are deleted in reverse ordinal\norder.\no You'd use StatefulSets for applications requiring persistent storage, stable\nnetwork identities, or ordered scaling, such as databases (e.g., MySQL,\nPostgreSQL), message queues (e.g., Kafka), or other stateful services.",
+      "level": "junior",
+      "source": "100 Kubernetes Interview Questions",
+      "tags": [
+        "Kubernetes",
+        "K8s",
+        "CloudNative"
+      ]
+    },
+    {
       "id": "k100_12",
       "question": "What is a DaemonSet and when would you use it?",
       "answer": "o Answer: A DaemonSet ensures that a copy of a Pod runs on all (or a\nsubset of) nodes in a cluster. They are typically used for cluster-level\nfunctionalities like:\n▪ Logging agents: (e.g., Fluentd, Logstash)\n▪ Monitoring agents: (e.g., Prometheus Node Exporter)\n▪ Storage daemon: (e.g., Ceph)",

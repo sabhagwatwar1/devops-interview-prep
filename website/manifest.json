@@ -1,0 +1,19 @@
+{
+  "name": "DevOps & SRE Interview Preparation Platform",
+  "short_name": "DevOps Vault",
+  "description": "Production Master Vault with 1326+ curated DevOps & SRE interview questions, scenarios, 3D flashcards, and offline preparation.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#04060e",
+  "theme_color": "#04060e",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/dharmachakra.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "developer", "productivity"]
+}

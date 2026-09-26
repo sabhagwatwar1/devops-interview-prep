@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initKeyboardShortcuts();      // #3
     initGlobalSearch();           // #2
     initMockInterview();          // #5
+    initPWA();                    // Offline PWA & Service Worker
     injectGlobalUI();             // injects overlays/FABs into DOM
 
     const currentTopic = document.body.getAttribute('data-topic');
@@ -419,6 +420,7 @@ function initStatsCounter() {
    ========================================================================== */
 let activeViewMode = 'accordion'; // 'accordion' or 'flashcard'
 let activeFilter = 'all';
+let activeSubTag = 'all';
 let currentSearch = '';
 
 function initTopicFeed(topicKey) {
@@ -445,16 +447,56 @@ function initTopicFeed(topicKey) {
         }
     }
 
+    function renderSubchips() {
+        let chipsBar = document.getElementById('topic-subchips-bar');
+        const feedContainer = document.getElementById('questions-feed-container');
+        if (!chipsBar && feedContainer) {
+            chipsBar = document.createElement('div');
+            chipsBar.id = 'topic-subchips-bar';
+            chipsBar.className = 'topic-subchips-bar container';
+            feedContainer.parentNode.insertBefore(chipsBar, feedContainer);
+        }
+        if (!chipsBar) return;
+
+        const tagCounts = {};
+        allQuestions.forEach(q => {
+            (q.tags || []).forEach(t => {
+                tagCounts[t] = (tagCounts[t] || 0) + 1;
+            });
+        });
+
+        const sortedTags = Object.keys(tagCounts).sort((a, b) => tagCounts[b] - tagCounts[a]).slice(0, 8);
+        if (sortedTags.length === 0) {
+            chipsBar.style.display = 'none';
+            return;
+        }
+        chipsBar.style.display = 'flex';
+        chipsBar.innerHTML = `
+            <button class="subchip-btn ${activeSubTag === 'all' ? 'active' : ''}" data-tag="all"><i class="fa-solid fa-layer-group"></i> All (${allQuestions.length})</button>
+            ${sortedTags.map(t => `<button class="subchip-btn ${activeSubTag === t ? 'active' : ''}" data-tag="${escapeHtml(t)}">#${escapeHtml(t)} (${tagCounts[t]})</button>`).join('')}
+        `;
+
+        chipsBar.querySelectorAll('.subchip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                activeSubTag = btn.getAttribute('data-tag') || 'all';
+                chipsBar.querySelectorAll('.subchip-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                render();
+            });
+        });
+    }
+
     function render() {
         const mastered = getMasteredList();
 
         const filtered = allQuestions.filter(q => {
             const matchesLevel = activeFilter === 'all' || q.level === activeFilter;
             const matchesSaved = activeFilter !== 'saved' || isQuestionBookmarked(q.id);
+            const matchesSubTag = activeSubTag === 'all' || (q.tags && q.tags.includes(activeSubTag));
             const matchesSearch = !currentSearch || 
                 q.question.toLowerCase().includes(currentSearch.toLowerCase()) || 
                 q.answer.toLowerCase().includes(currentSearch.toLowerCase());
-            return (activeFilter === 'saved' ? matchesSaved : matchesLevel) && matchesSearch;
+            return (activeFilter === 'saved' ? matchesSaved : matchesLevel) && matchesSearch && matchesSubTag;
         });
 
         if (searchCountBadge) {
@@ -467,7 +509,7 @@ function initTopicFeed(topicKey) {
                 <div class="cyber-card" style="padding: 3rem; text-align: center;">
                     <i class="fa-solid fa-microchip" style="font-size: 3rem; color: var(--neon-cyan); margin-bottom: 1rem;"></i>
                     <h3>No Matching Questions Found</h3>
-                    <p style="color: var(--text-muted);">Try adjusting your level filter or search keyword.</p>
+                    <p style="color: var(--text-muted);">Try adjusting your level filter, topic chip, or search keyword.</p>
                 </div>`;
             return;
         }
@@ -486,6 +528,8 @@ function initTopicFeed(topicKey) {
         attachMasteryListeners(topicKey);
         attachBookmarkListeners(topicKey, render);
         attachShareListeners();
+        attachTTSListeners();
+        attachDrillTimerListeners();
         updateMastery();
     }
 
@@ -524,6 +568,7 @@ function initTopicFeed(topicKey) {
         });
     }
 
+    renderSubchips();
     render();
 }
 
@@ -548,6 +593,14 @@ function renderAccordionCard(item, isMastered) {
                     <h4 class="qa-question-title">${item.question}</h4>
                 </div>
                 <div class="qa-actions-row">
+                    <button class="btn-tts-listen" data-qid="${item.id}" title="Listen to Question & Answer">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span class="tts-wave-bars"><span class="wb-bar"></span><span class="wb-bar"></span><span class="wb-bar"></span></span>
+                        <span class="tts-lbl">Listen</span>
+                    </button>
+                    <button class="btn-timer-toggle" data-qid="${item.id}" title="2-Minute Answer Drill Timer">
+                        <i class="fa-solid fa-stopwatch"></i> <span class="timer-btn-text">Drill</span>
+                    </button>
                     <button class="btn-bookmark-q ${isBookmarked ? 'bookmarked' : ''}" data-qid="${item.id}" title="${isBookmarked ? 'Remove bookmark' : 'Bookmark question'}">
                         <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-star"></i>
                     </button>
@@ -556,6 +609,24 @@ function renderAccordionCard(item, isMastered) {
                     </button>
                 </div>
                 <i class="fa-solid fa-chevron-right qa-toggle-icon"></i>
+            </div>
+            <div class="drill-timer-hud" id="drill-timer-${item.id}">
+                <div class="drill-timer-dial" id="timer-dial-${item.id}">
+                    <svg width="44" height="44" viewBox="0 0 44 44">
+                        <circle class="timer-dial-track" cx="22" cy="22" r="18"></circle>
+                        <circle class="timer-dial-bar" id="dial-bar-${item.id}" cx="22" cy="22" r="18"></circle>
+                    </svg>
+                    <span class="timer-dial-num" id="dial-num-${item.id}">02:00</span>
+                </div>
+                <div class="drill-timer-meta">
+                    <div class="drill-timer-title"><i class="fa-solid fa-bolt"></i> 2-MIN INTERVIEW DRILL</div>
+                    <div class="drill-timer-status" id="timer-status-${item.id}">Explain this question aloud under 2 minutes</div>
+                </div>
+                <div class="drill-timer-controls">
+                    <button class="btn-drill-action start" onclick="toggleDrillTimer('${item.id}')" id="btn-start-${item.id}"><i class="fa-solid fa-play"></i> Start</button>
+                    <button class="btn-drill-action reset" onclick="resetDrillTimer('${item.id}')"><i class="fa-solid fa-rotate-left"></i></button>
+                    <button class="btn-drill-action close" onclick="closeDrillTimer('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
             </div>
             <div class="qa-answer-body">
                 <div class="qa-answer-inner">
@@ -630,11 +701,24 @@ function attachMasteryListeners(topicKey) {
             const qid = chk.getAttribute('data-qid');
             let mastered = JSON.parse(localStorage.getItem(`mastered_${topicKey}`) || '[]');
             
+            const allQ = window.allQuestionsData[topicKey] || [];
+            
             if (chk.checked) {
                 if (!mastered.includes(qid)) mastered.push(qid);
                 chk.nextElementSibling.textContent = 'Mastered';
                 playSynthSound('mastered');
-                showCyberToast('Question marked as Mastered!');
+
+                const percent = allQ.length > 0 ? Math.round((mastered.length / allQ.length) * 100) : 0;
+                
+                if (percent === 100) {
+                    launchCyberConfetti();
+                    showCyberToast(`🏆 100% MASTERY in ${topicKey.toUpperCase()}! Outstanding!`);
+                } else if (percent === 75 || percent === 50 || percent === 25) {
+                    launchCyberConfetti();
+                    showCyberToast(`🎉 Milestone: ${percent}% Mastery in ${topicKey.toUpperCase()}!`);
+                } else {
+                    showCyberToast('Question marked as Mastered!');
+                }
             } else {
                 mastered = mastered.filter(id => id !== qid);
                 chk.nextElementSibling.textContent = 'Mark Learned';
@@ -648,7 +732,6 @@ function attachMasteryListeners(topicKey) {
                 else card.classList.remove('mastered-card');
             }
 
-            const allQ = window.allQuestionsData[topicKey] || [];
             const percent = allQ.length > 0 ? Math.round((mastered.length / allQ.length) * 100) : 0;
             const masteryPercentEl = document.getElementById('mastery-percent');
             if (masteryPercentEl) {
@@ -1286,6 +1369,12 @@ function initGlobalSearch() {
             mockBtn.innerHTML = '<i class="fa-solid fa-brain"></i> Mock Interview';
             mockBtn.addEventListener('click', startMockInterview);
             navControls.prepend(mockBtn);
+
+            // PWA Install Button
+            const pwaBtn = document.createElement('button');
+            pwaBtn.id = 'pwa-install-nav-btn';
+            pwaBtn.innerHTML = '<i class="fa-solid fa-download"></i> Install App';
+            navControls.prepend(pwaBtn);
         }
     });
 })();
@@ -1672,5 +1761,306 @@ function exportTopicMarkdown(topicKey) {
 }
 
 window.exportTopicMarkdown = exportTopicMarkdown;
+window.exportCurrentTopicMarkdown = exportTopicMarkdown;
+
+/* ==========================================================================
+   FEATURE 1: Hands-Free Audio Voice Reader (Web Speech API)
+   ========================================================================== */
+let activeSpeechUtterance = null;
+let activeSpeakingBtn = null;
+
+function attachTTSListeners() {
+    document.querySelectorAll('.btn-tts-listen').forEach(btn => {
+        if (btn._ttsBound) return;
+        btn._ttsBound = true;
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const qid = btn.getAttribute('data-qid');
+            const card = document.getElementById(qid);
+            if (!card) return;
+
+            if (btn === activeSpeakingBtn && window.speechSynthesis && window.speechSynthesis.speaking) {
+                window.speechSynthesis.cancel();
+                resetTTSBtn(btn);
+                activeSpeakingBtn = null;
+                return;
+            }
+
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            if (activeSpeakingBtn) resetTTSBtn(activeSpeakingBtn);
+
+            const qTitle = card.querySelector('.qa-question-title')?.textContent || '';
+            const qAnswer = card.querySelector('.qa-answer-inner')?.textContent || '';
+            const cleanText = `Question: ${qTitle}. Answer: ${qAnswer}`;
+
+            if (!('speechSynthesis' in window)) {
+                showCyberToast('Speech synthesis not supported in this browser');
+                return;
+            }
+
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.rate = 1.0;
+            utterance.pitch = 1.0;
+
+            utterance.onstart = () => {
+                btn.classList.add('playing');
+                const lbl = btn.querySelector('.tts-lbl');
+                if (lbl) lbl.textContent = 'Stop';
+                activeSpeakingBtn = btn;
+                showCyberToast('Playing audio voice reader 🎧');
+            };
+
+            utterance.onend = () => {
+                resetTTSBtn(btn);
+                activeSpeakingBtn = null;
+            };
+
+            utterance.onerror = () => {
+                resetTTSBtn(btn);
+                activeSpeakingBtn = null;
+            };
+
+            activeSpeechUtterance = utterance;
+            window.speechSynthesis.speak(utterance);
+        });
+    });
+}
+
+function resetTTSBtn(btn) {
+    if (!btn) return;
+    btn.classList.remove('playing');
+    const lbl = btn.querySelector('.tts-lbl');
+    if (lbl) lbl.textContent = 'Listen';
+}
+
+/* ==========================================================================
+   FEATURE 2: 2-Minute Interview Pressure Drill Timer
+   ========================================================================== */
+const drillTimers = {};
+
+function attachDrillTimerListeners() {
+    document.querySelectorAll('.btn-timer-toggle').forEach(btn => {
+        if (btn._timerBound) return;
+        btn._timerBound = true;
+
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const qid = btn.getAttribute('data-qid');
+            const hud = document.getElementById(`drill-timer-${qid}`);
+            if (!hud) return;
+
+            const isOpen = hud.classList.toggle('open');
+            btn.classList.toggle('active', isOpen);
+
+            if (isOpen) {
+                const card = document.getElementById(qid);
+                if (card) card.classList.add('active');
+            }
+        });
+    });
+}
+
+function toggleDrillTimer(qid) {
+    const hud = document.getElementById(`drill-timer-${qid}`);
+    if (!hud) return;
+
+    if (!drillTimers[qid]) {
+        drillTimers[qid] = { seconds: 120, interval: null, isRunning: false };
+    }
+    const timer = drillTimers[qid];
+    const btn = document.getElementById(`btn-start-${qid}`);
+    const status = document.getElementById(`timer-status-${qid}`);
+
+    if (timer.isRunning) {
+        clearInterval(timer.interval);
+        timer.isRunning = false;
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-play"></i> Resume';
+        if (btn) btn.classList.remove('running');
+        if (status) status.textContent = 'Timer paused. Click resume when ready.';
+    } else {
+        timer.isRunning = true;
+        if (btn) btn.innerHTML = '<i class="fa-solid fa-pause"></i> Pause';
+        if (btn) btn.classList.add('running');
+        if (status) status.textContent = 'Practice explaining aloud now!';
+
+        timer.interval = setInterval(() => {
+            timer.seconds--;
+            updateDrillDisplay(qid);
+
+            if (timer.seconds === 10) {
+                playSynthSound('beep');
+            }
+
+            if (timer.seconds <= 0) {
+                clearInterval(timer.interval);
+                timer.isRunning = false;
+                if (btn) btn.innerHTML = '<i class="fa-solid fa-rotate-left"></i> Restart';
+                if (btn) btn.classList.remove('running');
+                if (status) status.innerHTML = '<strong style="color:var(--neon-green);">⏱️ Time Up! Great response practice!</strong>';
+                playSynthSound('mastered');
+                launchCyberConfetti();
+                showCyberToast('2-minute interview drill completed! ⏱️');
+            }
+        }, 1000);
+    }
+}
+
+function updateDrillDisplay(qid) {
+    const timer = drillTimers[qid];
+    if (!timer) return;
+
+    const dial = document.getElementById(`timer-dial-${qid}`);
+    const dialBar = document.getElementById(`dial-bar-${qid}`);
+    const dialNum = document.getElementById(`dial-num-${qid}`);
+
+    const mins = Math.floor(timer.seconds / 60);
+    const secs = timer.seconds % 60;
+    const timeStr = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    if (dialNum) dialNum.textContent = timeStr;
+
+    const totalSecs = 120;
+    const circumference = 113.1;
+    const offset = circumference - (timer.seconds / totalSecs) * circumference;
+    if (dialBar) dialBar.style.strokeDashoffset = offset;
+
+    if (dial) {
+        dial.classList.remove('warn', 'danger');
+        if (timer.seconds <= 15) {
+            dial.classList.add('danger');
+        } else if (timer.seconds <= 45) {
+            dial.classList.add('warn');
+        }
+    }
+}
+
+function resetDrillTimer(qid) {
+    if (drillTimers[qid]) {
+        clearInterval(drillTimers[qid].interval);
+    }
+    drillTimers[qid] = { seconds: 120, interval: null, isRunning: false };
+    const btn = document.getElementById(`btn-start-${qid}`);
+    if (btn) {
+        btn.innerHTML = '<i class="fa-solid fa-play"></i> Start';
+        btn.classList.remove('running');
+    }
+    const status = document.getElementById(`timer-status-${qid}`);
+    if (status) status.textContent = 'Explain this question aloud under 2 minutes';
+    updateDrillDisplay(qid);
+}
+
+function closeDrillTimer(qid) {
+    resetDrillTimer(qid);
+    const hud = document.getElementById(`drill-timer-${qid}`);
+    if (hud) hud.classList.remove('open');
+    const toggleBtn = document.querySelector(`.btn-timer-toggle[data-qid="${qid}"]`);
+    if (toggleBtn) toggleBtn.classList.remove('active');
+}
+
+window.toggleDrillTimer = toggleDrillTimer;
+window.resetDrillTimer = resetDrillTimer;
+window.closeDrillTimer = closeDrillTimer;
+
+/* ==========================================================================
+   FEATURE 3: Cyber Milestone & Mastery Confetti Particle Burst
+   ========================================================================== */
+function launchCyberConfetti() {
+    let canvas = document.getElementById('cyber-confetti-canvas');
+    if (!canvas) {
+        canvas = document.createElement('canvas');
+        canvas.id = 'cyber-confetti-canvas';
+        document.body.appendChild(canvas);
+    }
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const colors = ['#00f0ff', '#00ff88', '#a855f7', '#f59e0b', '#ec4899', '#ffffff'];
+    const particles = Array.from({ length: 110 }).map(() => ({
+        x: canvas.width / 2 + (Math.random() - 0.5) * 240,
+        y: canvas.height * 0.35 + (Math.random() - 0.5) * 60,
+        vx: (Math.random() - 0.5) * 18,
+        vy: (Math.random() - 0.8) * 16 - 4,
+        size: Math.random() * 8 + 4,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rotation: Math.random() * 360,
+        vr: (Math.random() - 0.5) * 12,
+        opacity: 1,
+        life: 1
+    }));
+
+    let animId;
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = 0;
+        particles.forEach(p => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.38; // gravity
+            p.vx *= 0.98; // air drag
+            p.rotation += p.vr;
+            p.life -= 0.012;
+            p.opacity = Math.max(0, p.life);
+
+            if (p.opacity > 0) {
+                active++;
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate((p.rotation * Math.PI) / 180);
+                ctx.globalAlpha = p.opacity;
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.6);
+                ctx.restore();
+            }
+        });
+
+        if (active > 0) {
+            animId = requestAnimationFrame(animate);
+        } else {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            cancelAnimationFrame(animId);
+        }
+    }
+    animate();
+}
+window.launchCyberConfetti = launchCyberConfetti;
+
+/* ==========================================================================
+   FEATURE 5: Offline PWA & Service Worker Manager
+   ========================================================================== */
+let deferredPwaPrompt = null;
+
+function initPWA() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js').then((reg) => {
+                // Registered successfully
+            }).catch((err) => {
+                console.warn('SW registration failed:', err);
+            });
+        });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPwaPrompt = e;
+        const pwaBtn = document.getElementById('pwa-install-nav-btn');
+        if (pwaBtn) {
+            pwaBtn.classList.add('visible');
+            pwaBtn.addEventListener('click', () => {
+                if (deferredPwaPrompt) {
+                    deferredPwaPrompt.prompt();
+                    deferredPwaPrompt.userChoice.then(() => {
+                        deferredPwaPrompt = null;
+                        pwaBtn.classList.remove('visible');
+                        showCyberToast('DevOps Master Vault installed for offline study! 📲');
+                    });
+                }
+            });
+        }
+    });
+}
 window.exportCurrentTopicMarkdown = exportTopicMarkdown;
 
