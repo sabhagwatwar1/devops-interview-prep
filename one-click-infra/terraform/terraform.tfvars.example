@@ -1,0 +1,42 @@
+# ─── Project & Region ─────────────────────────────────────────────────────────
+project_name = "one-click"
+environment  = "dev"
+aws_region   = "us-east-1"
+
+# ─── VPC & Networking ───────────────────────────────────────────────────────
+vpc_cidr           = "10.0.0.0/16"
+enable_nat_gateway = true
+single_nat_gateway = true   # Set to false for multi-AZ NAT GW redundancy in prod
+
+# ─── Compute: Choose 'eks', 'ec2', or 'none' ────────────────────────────────
+compute_type = "eks"
+
+# If compute_type = "eks"
+eks_cluster_version  = "1.29"
+eks_instance_types   = ["t3.medium"]
+eks_desired_capacity = 2
+eks_min_capacity     = 1
+eks_max_capacity     = 4
+
+# If compute_type = "ec2"
+ec2_instance_type    = "t3.micro"
+ec2_desired_capacity = 2
+ec2_min_size         = 1
+ec2_max_size         = 4
+ec2_ssh_key_name     = ""
+
+# ─── Database: Relational Database Service (RDS) ─────────────────────────────
+enable_database      = false
+db_engine            = "postgres" # or "mysql"
+db_instance_class    = "db.t4g.micro"
+db_allocated_storage = 20
+db_name              = "appdb"
+db_username          = "dbadmin"
+db_multi_az          = false
+
+# ─── Custom Resource Tags ───────────────────────────────────────────────────
+tags = {
+  Owner       = "DevOpsTeam"
+  Repository  = "one-click-infra"
+  CostCenter  = "Engineering-101"
+}

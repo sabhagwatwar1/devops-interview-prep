@@ -1,0 +1,243 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 60, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '30'))
+        ansiColor('xterm')
+        disableConcurrentBuilds()
+    }
+
+    parameters {
+        choice(
+            name: 'ENVIRONMENT',
+            choices: ['dev', 'staging', 'prod'],
+            description: 'Target deployment environment'
+        )
+        choice(
+            name: 'ACTION',
+            choices: ['plan', 'apply', 'destroy'],
+            description: 'Terraform action to execute'
+        )
+        string(
+            name: 'AWS_REGION',
+            defaultValue: 'us-east-1',
+            description: 'Target AWS region for infrastructure'
+        )
+        choice(
+            name: 'COMPUTE_TYPE',
+            choices: ['eks', 'ec2', 'none'],
+            description: 'Compute tier architecture: EKS (Kubernetes) or EC2 (ASG + ALB)'
+        )
+        booleanParam(
+            name: 'ENABLE_DATABASE',
+            defaultValue: false,
+            description: 'Provision an Amazon RDS Database (PostgreSQL/MySQL)'
+        )
+        choice(
+            name: 'DB_ENGINE',
+            choices: ['postgres', 'mysql'],
+            description: 'RDS Database Engine (if database enabled)'
+        )
+        string(
+            name: 'EKS_NODE_COUNT',
+            defaultValue: '2',
+            description: 'Desired worker node count for EKS cluster'
+        )
+        booleanParam(
+            name: 'AUTO_APPROVE',
+            defaultValue: false,
+            description: 'Skip interactive manual approval gate before apply/destroy (CAUTION: Not recommended for prod)'
+        )
+    }
+
+    environment {
+        TF_DIR          = "${WORKSPACE}/terraform"
+        TF_IN_AUTOMATION = 'true'
+        TF_INPUT        = '0'
+        AWS_DEFAULT_REGION = "${params.AWS_REGION}"
+        // Bind AWS credentials from Jenkins Credentials Store (ID: 'aws-credentials')
+        AWS_CREDS       = credentials('aws-credentials')
+        AWS_ACCESS_KEY_ID     = "${AWS_CREDS_USR}"
+        AWS_SECRET_ACCESS_KEY = "${AWS_CREDS_PSW}"
+    }
+
+    stages {
+        stage('Initialize & Pre-flight') {
+            steps {
+                script {
+                    echo """
+                    ====================================================================
+                     🚀 ONE-CLICK INFRA — JENKINS DEPLOYMENT PIPELINE
+                    ====================================================================
+                     Environment   : ${params.ENVIRONMENT}
+                     Action        : ${params.ACTION}
+                     AWS Region    : ${params.AWS_REGION}
+                     Compute Type  : ${params.COMPUTE_TYPE}
+                     Database (RDS): ${params.ENABLE_DATABASE} (${params.DB_ENGINE})
+                     Build Number  : #${BUILD_NUMBER}
+                    ====================================================================
+                    """
+                    sh 'terraform version'
+                    sh 'aws --version || true'
+                }
+            }
+        }
+
+        stage('Lint & Validate') {
+            steps {
+                dir("${env.TF_DIR}") {
+                    sh 'terraform fmt -check'
+                    sh 'terraform init -backend=false'
+                    sh 'terraform validate'
+                }
+            }
+        }
+
+        stage('Security Scan (tfsec)') {
+            steps {
+                script {
+                    // Run security scan if tfsec / checkov binary is available on agent
+                    sh '''
+                    if command -v tfsec >/dev/null 2>&1; then
+                        echo "Running tfsec static security analysis..."
+                        tfsec terraform --soft-fail || true
+                    else
+                        echo "tfsec not found on agent, skipping static security scan."
+                    fi
+                    '''
+                }
+            }
+        }
+
+        stage('Generate Terraform Configuration') {
+            steps {
+                dir("${env.TF_DIR}") {
+                    script {
+                        def isProd = (params.ENVIRONMENT == 'prod')
+                        def singleNat = isProd ? "false" : "true"
+
+                        writeFile file: 'terraform.tfvars', text: """
+# Generated automatically by Jenkins Pipeline #${BUILD_NUMBER}
+project_name       = "one-click"
+environment        = "${params.ENVIRONMENT}"
+aws_region         = "${params.AWS_REGION}"
+
+vpc_cidr           = "10.0.0.0/16"
+enable_nat_gateway = true
+single_nat_gateway = ${singleNat}
+
+compute_type       = "${params.COMPUTE_TYPE}"
+eks_desired_capacity = ${params.EKS_NODE_COUNT}
+eks_min_capacity     = 1
+eks_max_capacity     = 4
+
+enable_database      = ${params.ENABLE_DATABASE}
+db_engine            = "${params.DB_ENGINE}"
+db_instance_class    = "db.t4g.micro"
+db_allocated_storage = 20
+db_name              = "appdb"
+db_username          = "dbadmin"
+db_multi_az          = ${isProd ? "true" : "false"}
+
+tags = {
+  Provisioner = "Jenkins-CI-CD"
+  BuildNumber = "${BUILD_NUMBER}"
+  Environment = "${params.ENVIRONMENT}"
+}
+"""
+                        echo "Generated terraform.tfvars successfully:"
+                        sh 'cat terraform.tfvars'
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Init') {
+            steps {
+                dir("${env.TF_DIR}") {
+                    sh 'terraform init -reconfigure'
+                }
+            }
+        }
+
+        stage('Terraform Plan') {
+            steps {
+                dir("${env.TF_DIR}") {
+                    script {
+                        if (params.ACTION == 'destroy') {
+                            sh 'terraform plan -destroy -out=tfplan'
+                        } else {
+                            sh 'terraform plan -out=tfplan'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Manual Approval Gate') {
+            when {
+                expression {
+                    return (params.ACTION in ['apply', 'destroy']) && (!params.AUTO_APPROVE.toBoolean())
+                }
+            }
+            steps {
+                script {
+                    def confirmationMsg = params.ACTION == 'destroy' ? 
+                        "⚠️ ATTENTION: You are about to DESTROY infrastructure in '${params.ENVIRONMENT}'. Are you sure?" : 
+                        "Review the Terraform Plan above. Do you approve applying changes to '${params.ENVIRONMENT}'?"
+
+                    timeout(time: 30, unit: 'MINUTES') {
+                        input id: 'ApprovalInput', message: confirmationMsg, ok: "Proceed with ${params.ACTION.toUpperCase()}"
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply / Destroy') {
+            when {
+                expression { return params.ACTION in ['apply', 'destroy'] }
+            }
+            steps {
+                dir("${env.TF_DIR}") {
+                    script {
+                        if (params.ACTION == 'apply') {
+                            echo "Executing Terraform Apply..."
+                            sh 'terraform apply -input=false tfplan'
+                        } else if (params.ACTION == 'destroy') {
+                            echo "Executing Terraform Destroy..."
+                            sh 'terraform apply -input=false tfplan'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Outputs & Artifacts') {
+            when {
+                expression { return params.ACTION == 'apply' }
+            }
+            steps {
+                dir("${env.TF_DIR}") {
+                    script {
+                        sh 'terraform output -json > ${WORKSPACE}/terraform_outputs.json'
+                        sh 'terraform output'
+                        archiveArtifacts artifacts: 'terraform_outputs.json', fingerprint: true
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs(deleteDirs: true, notFailBuild: true, patterns: [[pattern: '**/tfplan', type: 'INCLUDE']])
+        }
+        success {
+            echo "🎉 Pipeline finished successfully for action '${params.ACTION}' in '${params.ENVIRONMENT}'!"
+        }
+        failure {
+            echo "❌ Pipeline failed! Please check the stage logs above."
+        }
+    }
+}
