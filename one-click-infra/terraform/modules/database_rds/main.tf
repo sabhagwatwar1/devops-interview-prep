@@ -104,3 +104,4 @@ resource "aws_db_instance" "this" {
 
   tags = merge(local.common_tags, { Name = "${local.name_prefix}-rds" })
 }
+

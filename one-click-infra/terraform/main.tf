@@ -74,3 +74,4 @@ module "database_rds" {
   allowed_security_group_ids = local.compute_security_group_ids
   tags                       = var.tags
 }
+

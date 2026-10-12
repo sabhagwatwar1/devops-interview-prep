@@ -73,3 +73,4 @@ output "deployment_summary" {
     database    = var.enable_database ? "${var.db_engine} (${var.db_instance_class})" : "none"
   }
 }
+

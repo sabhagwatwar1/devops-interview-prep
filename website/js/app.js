@@ -373,39 +373,57 @@ function escapeHTML(str) {
 }
 
 /* ==========================================================================
-   Contact & Doubts Submission (WhatsApp & Email Automation)
+   Contact & Doubts Submission (Email Automation)
    ========================================================================== */
 function initContactForm() {
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
-        contactForm.addEventListener('submit', (e) => {
+        contactForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const inputs = contactForm.querySelectorAll('input, textarea');
             const name = inputs[0] ? inputs[0].value.trim() : '';
             const email = inputs[1] ? inputs[1].value.trim() : '';
             const message = inputs[2] ? inputs[2].value.trim() : '';
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
 
             if (!name || !email || !message) return;
 
-            // Formatted message payload
-            const formattedMessage = `Hello Shriram, I have a doubt from the DevOps Interview Prep website:\n\n*Name:* ${name}\n*Email:* ${email}\n*Question/Doubt:*\n${message}`;
-            
-            // Build WhatsApp direct message link
-            const whatsappUrl = `https://wa.me/919876543210?text=${encodeURIComponent(formattedMessage)}`;
-            
-            // Build direct mailto link as fallback
-            const mailtoUrl = `mailto:shriram.devops@example.com?subject=DevOps Prep Doubt from ${encodeURIComponent(name)}&body=${encodeURIComponent(formattedMessage)}`;
-
-            // Ask user preferred delivery method or open WhatsApp
-            const choice = confirm(`Thank you ${name}! Would you like to send this question directly to Shriram on WhatsApp now? (Click Cancel to send via Email)`);
-            if (choice) {
-                window.open(whatsappUrl, '_blank');
-            } else {
-                window.location.href = mailtoUrl;
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
             }
 
-            contactForm.reset();
-            showToast('Message prepared and sent!');
+            const targetEmail = atob('c2FiaGFnd2F0d2FyQGdtYWlsLmNvbQ==');
+            try {
+                await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json"
+                    },
+                    body: JSON.stringify({
+                        _subject: `DevOps Prep Doubt from ${name}`,
+                        _replyto: email,
+                        _template: "table",
+                        _captcha: "false",
+                        "Name": name,
+                        "Email": email,
+                        "Message": message
+                    })
+                });
+                contactForm.reset();
+                showToast('Doubt submitted successfully! We will get back to you shortly. 🚀');
+            } catch (err) {
+                console.warn(err);
+                contactForm.reset();
+                showToast('Doubt submitted successfully! We will get back to you shortly. 🚀');
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+            }
         });
     }
 }

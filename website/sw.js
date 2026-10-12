@@ -2,7 +2,7 @@
  * DevOps & SRE Master Vault - Service Worker (Offline Cache)
  */
 
-const CACHE_NAME = 'devops-vault-v2026.1';
+const CACHE_NAME = 'devops-vault-v2026.15';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -22,6 +22,7 @@ const ASSETS_TO_CACHE = [
   './css/style.css',
   './js/cyber_app.js',
   './js/all_questions.js',
+  './js/firebase-config.js',
   './manifest.json'
 ];
 
@@ -82,3 +83,4 @@ self.addEventListener('fetch', (event) => {
     })
   );
 });
+

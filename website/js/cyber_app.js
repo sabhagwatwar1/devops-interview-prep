@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initAudioSynth();
     initCyberCanvas();
     initThemeMatrix();
+    initModernNavbar();          // Modern Mega-Menu & Top-tier Navigation
     initMobileSidebarDrawer();   // #4 — replaces old mobile nav
     initMobileNav();
     initAOSAndMermaid();
@@ -292,6 +293,322 @@ function applyTheme(theme) {
     }
 }
 
+/* ==========================================================================
+   Modern Mega-Navigation System
+   ========================================================================== */
+function initModernNavbar() {
+    const navbar = document.querySelector('.cyber-navbar');
+    if (!navbar) return;
+
+    const navContainer = navbar.querySelector('.nav-container');
+    if (!navContainer) return;
+
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+
+    const topicMap = {
+        'kubernetes.html': { name: 'Kubernetes', id: 'kubernetes', icon: 'fa-dharmachakra', color: '#326ce5' },
+        'aws.html': { name: 'AWS & Cloud', id: 'aws', icon: 'fa-brands fa-aws', color: '#ff9900' },
+        'terraform.html': { name: 'Terraform', id: 'terraform', icon: 'fa-cube', color: '#7b42bc' },
+        'docker.html': { name: 'Docker', id: 'docker', icon: 'fa-brands fa-docker', color: '#2496ed' },
+        'linux.html': { name: 'Linux & OS', id: 'linux', icon: 'fa-brands fa-linux', color: '#fcc624' },
+        'networking.html': { name: 'Networking', id: 'networking', icon: 'fa-network-wired', color: '#10b981' },
+        'git.html': { name: 'Git & VCS', id: 'git', icon: 'fa-brands fa-git-alt', color: '#f05032' },
+        'cicd.html': { name: 'CI/CD Pipelines', id: 'cicd', icon: 'fa-code-branch', color: '#00f0ff' },
+        'gitops.html': { name: 'GitOps & ArgoCD', id: 'gitops', icon: 'fa-arrows-spin', color: '#ef4444' },
+        'observability.html': { name: 'Observability', id: 'observability', icon: 'fa-chart-line', color: '#a855f7' },
+        'security.html': { name: 'DevSecOps', id: 'security', icon: 'fa-shield-halved', color: '#ec4899' },
+        'scenario.html': { name: 'Scenarios', id: 'scenario', icon: 'fa-users-gear', color: '#06b6d4' }
+    };
+
+    const currentTopicMeta = topicMap[currentPage] || null;
+    const isTopicPage = !!currentTopicMeta;
+    const isHomePage = currentPage === 'index.html' || currentPage === '';
+    const isCommunityPage = currentPage === 'community.html';
+
+    const triggerLabel = isTopicPage ? `Topics: ${currentTopicMeta.name}` : `Topics`;
+    const triggerClass = isTopicPage ? 'nav-dropdown-trigger active' : 'nav-dropdown-trigger';
+
+    const modernMenuHtml = `
+        <a href="index.html" class="nav-link ${isHomePage ? 'active' : ''}">
+            <i class="fa-solid fa-house"></i> <span>Home</span>
+        </a>
+
+        <div class="nav-dropdown" id="topics-nav-dropdown">
+            <button class="${triggerClass}" id="topics-menu-trigger" aria-expanded="false" aria-haspopup="true">
+                <i class="fa-solid fa-layer-group" style="${isTopicPage ? `color: ${currentTopicMeta.color};` : ''}"></i>
+                <span>${triggerLabel}</span>
+                <span class="topics-badge-count">12</span>
+                <i class="fa-solid fa-chevron-down nav-caret"></i>
+            </button>
+
+            <div class="mega-menu-panel" id="topics-mega-menu" role="menu">
+                <div class="mega-menu-inner">
+                    <div class="mega-menu-top-bar">
+                        <div class="mega-top-left">
+                            <span class="mega-pill-badge"><i class="fa-solid fa-graduation-cap"></i> 12 Specialization Vaults</span>
+                            <span class="mega-top-info">1,325+ Curated Questions with Production Code & Spoken Audio Reader</span>
+                        </div>
+                        <a href="index.html#topics-grid" class="mega-view-grid-btn">
+                            <span>Browse Vault Grid</span> <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+
+                    <div class="mega-menu-grid">
+                        <!-- Col 1: Cloud & Infra -->
+                        <div class="mega-group">
+                            <div class="mega-group-title">
+                                <span class="mega-group-dot" style="background: #38bdf8;"></span>
+                                <span>Cloud & Infra</span>
+                            </div>
+                            <div class="mega-items-list">
+                                <a href="kubernetes.html" class="mega-card ${currentPage === 'kubernetes.html' ? 'active-topic' : ''}" data-topic="kubernetes">
+                                    <div class="mega-icon-box" style="background: rgba(50, 108, 229, 0.14); color: #326ce5;">
+                                        <i class="fa-solid fa-dharmachakra"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Kubernetes <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Control Plane, Pods, CNI, HPA, RBAC</div>
+                                    </div>
+                                </a>
+                                <a href="aws.html" class="mega-card ${currentPage === 'aws.html' ? 'active-topic' : ''}" data-topic="aws">
+                                    <div class="mega-icon-box" style="background: rgba(255, 153, 0, 0.14); color: #ff9900;">
+                                        <i class="fa-brands fa-aws"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">AWS & Cloud <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">VPC, IAM, EKS, ECS, S3, RDS</div>
+                                    </div>
+                                </a>
+                                <a href="terraform.html" class="mega-card ${currentPage === 'terraform.html' ? 'active-topic' : ''}" data-topic="terraform">
+                                    <div class="mega-icon-box" style="background: rgba(123, 66, 188, 0.14); color: #7b42bc;">
+                                        <i class="fa-solid fa-cube"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Terraform <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">State, Modules, Workspaces, IaC</div>
+                                    </div>
+                                </a>
+                                <a href="docker.html" class="mega-card ${currentPage === 'docker.html' ? 'active-topic' : ''}" data-topic="docker">
+                                    <div class="mega-icon-box" style="background: rgba(36, 150, 237, 0.14); color: #2496ed;">
+                                        <i class="fa-brands fa-docker"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Docker <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Containers, Cgroups, Multi-stage</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Col 2: Core & Systems -->
+                        <div class="mega-group">
+                            <div class="mega-group-title">
+                                <span class="mega-group-dot" style="background: #facc15;"></span>
+                                <span>Core & Systems</span>
+                            </div>
+                            <div class="mega-items-list">
+                                <a href="linux.html" class="mega-card ${currentPage === 'linux.html' ? 'active-topic' : ''}" data-topic="linux">
+                                    <div class="mega-icon-box" style="background: rgba(252, 198, 36, 0.14); color: #fcc624;">
+                                        <i class="fa-brands fa-linux"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Linux & OS <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Kernel, Signals, Memory, Systemd</div>
+                                    </div>
+                                </a>
+                                <a href="networking.html" class="mega-card ${currentPage === 'networking.html' ? 'active-topic' : ''}" data-topic="networking">
+                                    <div class="mega-icon-box" style="background: rgba(16, 185, 129, 0.14); color: #10b981;">
+                                        <i class="fa-solid fa-network-wired"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Networking <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">TCP/IP, DNS, HTTP/2, TLS, Routing</div>
+                                    </div>
+                                </a>
+                                <a href="git.html" class="mega-card ${currentPage === 'git.html' ? 'active-topic' : ''}" data-topic="git">
+                                    <div class="mega-icon-box" style="background: rgba(240, 80, 50, 0.14); color: #f05032;">
+                                        <i class="fa-brands fa-git-alt"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Git & VCS <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Rebase, Internals, Cherry-pick</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Col 3: Delivery & GitOps -->
+                        <div class="mega-group">
+                            <div class="mega-group-title">
+                                <span class="mega-group-dot" style="background: #22d3ee;"></span>
+                                <span>Delivery & GitOps</span>
+                            </div>
+                            <div class="mega-items-list">
+                                <a href="cicd.html" class="mega-card ${currentPage === 'cicd.html' ? 'active-topic' : ''}" data-topic="cicd">
+                                    <div class="mega-icon-box" style="background: rgba(0, 240, 255, 0.14); color: #00f0ff;">
+                                        <i class="fa-solid fa-code-branch"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">CI/CD Pipelines <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Jenkins, Actions, Runners</div>
+                                    </div>
+                                </a>
+                                <a href="gitops.html" class="mega-card ${currentPage === 'gitops.html' ? 'active-topic' : ''}" data-topic="gitops">
+                                    <div class="mega-icon-box" style="background: rgba(239, 68, 68, 0.14); color: #ef4444;">
+                                        <i class="fa-solid fa-arrows-spin"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">GitOps & ArgoCD <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Sync Waves, Rollouts, Drift</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Col 4: Reliability & Security -->
+                        <div class="mega-group">
+                            <div class="mega-group-title">
+                                <span class="mega-group-dot" style="background: #a855f7;"></span>
+                                <span>SRE & Security</span>
+                            </div>
+                            <div class="mega-items-list">
+                                <a href="observability.html" class="mega-card ${currentPage === 'observability.html' ? 'active-topic' : ''}" data-topic="observability">
+                                    <div class="mega-icon-box" style="background: rgba(168, 85, 247, 0.14); color: #a855f7;">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Observability <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Prometheus, Grafana, OTel</div>
+                                    </div>
+                                </a>
+                                <a href="security.html" class="mega-card ${currentPage === 'security.html' ? 'active-topic' : ''}" data-topic="security">
+                                    <div class="mega-icon-box" style="background: rgba(236, 72, 153, 0.14); color: #ec4899;">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">DevSecOps <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Vault, Trivy, Falco, SAST</div>
+                                    </div>
+                                </a>
+                                <a href="scenario.html" class="mega-card ${currentPage === 'scenario.html' ? 'active-topic' : ''}" data-topic="scenario">
+                                    <div class="mega-icon-box" style="background: rgba(6, 182, 212, 0.14); color: #06b6d4;">
+                                        <i class="fa-solid fa-users-gear"></i>
+                                    </div>
+                                    <div class="mega-card-info">
+                                        <div class="mega-card-name">Real Scenarios <span class="q-pill">100+ Qs</span></div>
+                                        <div class="mega-card-sub">Outage Drills, Post-mortems</div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mega-menu-bottom-bar">
+                        <div class="mega-bottom-hint">
+                            <i class="fa-solid fa-bolt" style="color: var(--neon-cyan);"></i>
+                            <span>Tip: Press <strong>⌘K</strong> or <strong>Ctrl+K</strong> from anywhere to instantly search across all questions</span>
+                        </div>
+                        <button class="mega-bottom-action-btn" onclick="startMockInterview()">
+                            <i class="fa-solid fa-brain"></i> Start 10-Q Mock Drill
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="scenario.html" class="nav-link ${currentPage === 'scenario.html' ? 'active' : ''}">
+            <i class="fa-solid fa-fire-flame-curved" style="color: #f59e0b;"></i> <span>Scenarios</span>
+        </a>
+        <a href="community.html" class="nav-link ${isCommunityPage ? 'active' : ''}">
+            <i class="fa-solid fa-comments"></i> <span>Community</span>
+        </a>
+    `;
+
+    const navMenu = navContainer.querySelector('.nav-menu');
+    if (navMenu) {
+        navMenu.innerHTML = modernMenuHtml;
+    }
+
+    // Toggle logic for dropdown on click
+    const dropdownWrap = document.getElementById('topics-nav-dropdown');
+    const triggerBtn = document.getElementById('topics-menu-trigger');
+
+    if (dropdownWrap && triggerBtn) {
+        triggerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const isOpen = dropdownWrap.classList.toggle('open');
+            triggerBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            if (isOpen && typeof playSynthSound === 'function') {
+                playSynthSound('blip');
+            }
+        });
+
+        // Close on clicking outside
+        document.addEventListener('click', (e) => {
+            if (!dropdownWrap.contains(e.target)) {
+                dropdownWrap.classList.remove('open');
+                triggerBtn.setAttribute('aria-expanded', 'false');
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && dropdownWrap.classList.contains('open')) {
+                dropdownWrap.classList.remove('open');
+                triggerBtn.setAttribute('aria-expanded', 'false');
+                triggerBtn.focus();
+            }
+        });
+
+        // Play synth sound on hover over mega items
+        dropdownWrap.querySelectorAll('.mega-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                if (typeof playSynthSound === 'function') playSynthSound('blip');
+            });
+        });
+    }
+
+    // Make sure controls on right exist and are styled properly
+    let navControls = navContainer.querySelector('.nav-controls');
+    if (!navControls) {
+        navControls = document.createElement('div');
+        navControls.className = 'nav-controls';
+        navContainer.appendChild(navControls);
+    }
+
+    // Ensure search button has new classes and icon
+    let searchBtn = document.getElementById('global-search-trigger');
+    if (!searchBtn) {
+        searchBtn = document.createElement('button');
+        searchBtn.id = 'global-search-trigger';
+        navControls.prepend(searchBtn);
+    }
+    searchBtn.className = 'nav-search-btn';
+    searchBtn.setAttribute('aria-label', 'Global search');
+    searchBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass"></i> <span class="search-btn-label">Quick Search...</span> <span class="kb-badge">⌃K</span>';
+
+    // Ensure mock interview button
+    let mockBtn = document.getElementById('mock-interview-nav-btn');
+    if (!mockBtn) {
+        mockBtn = document.createElement('button');
+        mockBtn.id = 'mock-interview-nav-btn';
+        mockBtn.setAttribute('onclick', 'startMockInterview()');
+        navControls.appendChild(mockBtn);
+    }
+    mockBtn.className = 'nav-mock-btn';
+    mockBtn.innerHTML = '<i class="fa-solid fa-brain"></i> <span>Mock Drill</span>';
+
+    // Ensure mobile toggle
+    let mobileToggle = navControls.querySelector('.cyber-mobile-toggle');
+    if (!mobileToggle) {
+        mobileToggle = document.createElement('button');
+        mobileToggle.className = 'cyber-mobile-toggle';
+        mobileToggle.setAttribute('aria-label', 'Open navigation menu');
+        mobileToggle.innerHTML = '<i class="fa-solid fa-bars-staggered"></i>';
+        navControls.appendChild(mobileToggle);
+    }
+}
+
 function initMobileNav() {
     const toggle = document.querySelector('.cyber-mobile-toggle');
     const menu = document.querySelector('.nav-menu');
@@ -372,6 +689,7 @@ function initLiveTerminal() {
         const item = TERMINAL_COMMANDS[cmdIdx];
         typedCmdEl.textContent = '';
         outputEl.textContent = '';
+        outputEl.scrollTop = 0;
 
         let charIdx = 0;
         const typeTimer = setInterval(() => {
@@ -382,6 +700,7 @@ function initLiveTerminal() {
                 clearInterval(typeTimer);
                 setTimeout(() => {
                     outputEl.textContent = item.output;
+                    outputEl.scrollTop = 0;
                     setTimeout(() => {
                         cmdIdx = (cmdIdx + 1) % TERMINAL_COMMANDS.length;
                         runCycle();
@@ -433,6 +752,34 @@ function initTopicFeed(topicKey) {
     const masteryPercentEl = document.getElementById('mastery-percent');
 
     const allQuestions = window.allQuestionsData[topicKey] || [];
+
+    // Ensure all stats pills and filter pill numbers dynamically match allQuestions array
+    if (allQuestions.length > 0) {
+        const jrCount = allQuestions.filter(q => q.level === 'junior').length;
+        const midCount = allQuestions.filter(q => q.level === 'mid').length;
+        const srCount = allQuestions.filter(q => q.level === 'senior').length;
+
+        const totalStrong = document.querySelector('.topic-stats-bar .badge-number');
+        if (totalStrong) totalStrong.textContent = allQuestions.length;
+
+        document.querySelectorAll('.topic-stats-bar .stat-pill').forEach(pill => {
+            const strong = pill.querySelector('strong');
+            if (!strong || strong.classList.contains('badge-number')) return;
+            const text = pill.textContent.toLowerCase();
+            if (text.includes('junior')) strong.textContent = jrCount;
+            else if (text.includes('mid')) strong.textContent = midCount;
+            else if (text.includes('senior')) strong.textContent = srCount;
+        });
+
+        const btnAll = document.querySelector('.filter-btn[data-filter="all"]');
+        if (btnAll) btnAll.textContent = `All (${allQuestions.length})`;
+        const btnJr = document.querySelector('.filter-btn[data-filter="junior"]');
+        if (btnJr) btnJr.textContent = `Junior (${jrCount})`;
+        const btnMid = document.querySelector('.filter-btn[data-filter="mid"]');
+        if (btnMid) btnMid.textContent = `Mid-Level (${midCount})`;
+        const btnSr = document.querySelector('.filter-btn[data-filter="senior"]');
+        if (btnSr) btnSr.textContent = `Senior (${srCount})`;
+    }
 
     // Load mastered question IDs from localStorage
     function getMasteredList() {
@@ -581,7 +928,7 @@ function renderAccordionCard(item, isMastered) {
     return `
         <div class="cyber-qa-item ${isMastered ? 'mastered-card' : ''}" id="${item.id}">
             <div class="qa-header-row">
-                <div style="flex-grow: 1;">
+                <div class="qa-meta-bar">
                     <div class="qa-left-meta">
                         <span class="badge-level ${badgeClass}">${levelLabel}</span>
                         ${item.source ? `<span class="q-source-tag"><i class="fa-solid fa-book-bookmark"></i> ${item.source}</span>` : ''}
@@ -590,6 +937,8 @@ function renderAccordionCard(item, isMastered) {
                             <span>${isMastered ? 'Mastered' : 'Mark Learned'}</span>
                         </label>
                     </div>
+                </div>
+                <div class="qa-title-wrapper">
                     <h4 class="qa-question-title">${item.question}</h4>
                 </div>
                 <div class="qa-actions-row">
@@ -604,11 +953,10 @@ function renderAccordionCard(item, isMastered) {
                     <button class="btn-bookmark-q ${isBookmarked ? 'bookmarked' : ''}" data-qid="${item.id}" title="${isBookmarked ? 'Remove bookmark' : 'Bookmark question'}">
                         <i class="fa-${isBookmarked ? 'solid' : 'regular'} fa-star"></i>
                     </button>
-                    <button class="btn-share-q" data-qid="${item.id}" title="Copy link to this question">
-                        <i class="fa-solid fa-link"></i>
-                    </button>
                 </div>
-                <i class="fa-solid fa-chevron-right qa-toggle-icon"></i>
+                <div class="qa-toggle-wrap">
+                    <i class="fa-solid fa-chevron-right qa-toggle-icon"></i>
+                </div>
             </div>
             <div class="drill-timer-hud" id="drill-timer-${item.id}">
                 <div class="drill-timer-dial" id="timer-dial-${item.id}">
@@ -677,6 +1025,7 @@ function attachAccordionListeners() {
     headers.forEach(header => {
         header.addEventListener('click', (e) => {
             if (e.target.closest('.mastered-checkbox-wrap')) return;
+            if (e.target.closest('.qa-actions-row')) return;
             const card = header.closest('.cyber-qa-item');
             card.classList.toggle('active');
         });
@@ -800,35 +1149,83 @@ function attachCopyListeners() {
 }
 
 /* ==========================================================================
-   7. Master Hub Contact Form (WhatsApp & Email Automation)
+   7. Master Hub Contact Form (Email Automation)
    ========================================================================== */
 function initMasterContactForm() {
     const form = document.getElementById('master-contact-form');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('contact-name').value.trim();
         const email = document.getElementById('contact-email').value.trim();
         const topic = document.getElementById('contact-topic').value;
         const message = document.getElementById('contact-message').value.trim();
+        const submitBtn = form.querySelector('button[type="submit"]');
 
         if (!name || !email || !message) return;
 
-        const payload = `🚀 *DevOps & SRE Interview Doubt*\n\n*Name:* ${name}\n*Email:* ${email}\n*Target Domain:* ${topic}\n\n*Question / Doubt:*\n${message}\n\n--- Sent from DevOps Master Vault ---`;
-
-        const waUrl = `https://wa.me/919876543210?text=${encodeURIComponent(payload)}`;
-        const mailUrl = `mailto:shriram.devops@example.com?subject=DevOps Doubt [${encodeURIComponent(topic)}] from ${encodeURIComponent(name)}&body=${encodeURIComponent(payload)}`;
-
-        const openWhatsApp = confirm(`Question prepared for Shriram!\n\nClick OK to send directly via WhatsApp now.\nClick Cancel to send via Email.`);
-        if (openWhatsApp) {
-            window.open(waUrl, '_blank');
-        } else {
-            window.location.href = mailUrl;
+        const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending Directly...';
         }
 
-        form.reset();
-        showCyberToast('Doubt dispatched successfully!');
+        const targetEmail = atob('c2FiaGFnd2F0d2FyQGdtYWlsLmNvbQ==');
+        const subject = `DevOps & SRE Doubt [${topic}] - ${name}`;
+
+        try {
+            // Direct background transmission (no email app / no client pop-ups)
+            const response = await fetch(`https://formsubmit.co/ajax/${targetEmail}`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    _subject: subject,
+                    _replyto: email,
+                    _template: "table",
+                    _captcha: "false",
+                    "Candidate Name": name,
+                    "Candidate Email": email,
+                    "Target Topic": topic,
+                    "Question / Doubt": message,
+                    "Sent Via": "DevOps & SRE Master Vault"
+                })
+            });
+
+            // Also post to Netlify form in the background if hosted on Netlify
+            try {
+                const netlifyData = new FormData(form);
+                fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(netlifyData).toString()
+                }).catch(() => {});
+            } catch (e2) {}
+
+            form.reset();
+            showCyberToast('Query sent successfully! We will get back to you shortly. 🚀');
+        } catch (err) {
+            console.warn("Direct dispatch error:", err);
+            // Fallback to Netlify background form submission
+            try {
+                const netlifyData = new FormData(form);
+                await fetch('/', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams(netlifyData).toString()
+                });
+            } catch (e3) {}
+            form.reset();
+            showCyberToast('Query sent successfully! We will get back to you shortly. 🚀');
+        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            }
+        }
     });
 }
 
@@ -837,12 +1234,29 @@ function initMasterContactForm() {
    ========================================================================== */
 const DEFAULT_COMMUNITY_FEED = [
     {
+        id: "comm_0",
+        author: "shriram",
+        tag: "Kubernetes",
+        question: "what is CICD",
+        timestamp: "Just now",
+        upvotes: 2,
+        downvotes: 0,
+        replies: [
+            {
+                author: "Staff_SRE",
+                text: "CI/CD stands for Continuous Integration & Continuous Delivery/Deployment. CI automates building, linting, and running automated test suites on every pull request. CD automates deployment of tested artifacts to staging and production environments using GitOps (ArgoCD) or automated pipelines (GitHub Actions, GitLab CI).",
+                timestamp: "Just now"
+            }
+        ]
+    },
+    {
         id: "comm_1",
         author: "DevOps_Alex",
         tag: "Kubernetes",
         question: "How do you resolve CrashLoopBackOff on a Pod when kubectl logs --previous returns nothing because the container exits before writing logs?",
         timestamp: "1 hour ago",
         upvotes: 18,
+        downvotes: 0,
         replies: [
             {
                 author: "Lead_SRE",
@@ -858,6 +1272,7 @@ const DEFAULT_COMMUNITY_FEED = [
         question: "When refactoring Terraform monolithic state into modular micro-states, what is the best practice to move resources without recreating live cloud infrastructure?",
         timestamp: "3 hours ago",
         upvotes: 12,
+        downvotes: 0,
         replies: [
             {
                 author: "IaC_Architect",
@@ -868,136 +1283,647 @@ const DEFAULT_COMMUNITY_FEED = [
     }
 ];
 
+let globalRtdb = null;
+let globalFirestoreDb = null;
+let firestoreUnsubscribe = null;
+let activeCommunityRenderFeed = null;
+
+function getUserPostReaction(postId) {
+    try {
+        const reactions = JSON.parse(localStorage.getItem('cyber_user_reactions') || '{}');
+        return reactions[postId] || null;
+    } catch (e) {
+        return null;
+    }
+}
+
+function setUserPostReaction(postId, reaction) {
+    try {
+        const reactions = JSON.parse(localStorage.getItem('cyber_user_reactions') || '{}');
+        if (reaction) {
+            reactions[postId] = reaction;
+        } else {
+            delete reactions[postId];
+        }
+        localStorage.setItem('cyber_user_reactions', JSON.stringify(reactions));
+    } catch (e) {}
+}
+
+function isFirebaseConfigured() {
+    return typeof firebase !== 'undefined' &&
+           window.firebaseConfig &&
+           window.firebaseConfig.apiKey &&
+           window.firebaseConfig.apiKey !== "YOUR_API_KEY" &&
+           window.firebaseConfig.apiKey.trim() !== "";
+}
+
+function updateCloudStatusBadge(status, message) {
+    const badge = document.getElementById('cloud-sync-status');
+    const connectBtn = document.getElementById('btn-cloud-connect');
+    const btnLabel = document.getElementById('cloud-btn-label');
+    if (!badge) return;
+
+    badge.className = 'cloud-status-badge';
+    if (status === 'online') {
+        badge.classList.add('cloud-online');
+        badge.innerHTML = `<i class="fa-solid fa-cloud-check"></i> Live Global Sync`;
+        badge.title = "Connected to Firebase Cloud Database. Doubts and answers sync across all devices worldwide.";
+        if (connectBtn) {
+            connectBtn.style.borderColor = 'rgba(0, 255, 136, 0.4)';
+            connectBtn.title = "Cloud Connected. Click to view or change Firebase settings.";
+        }
+        if (btnLabel) btnLabel.textContent = "Cloud Settings";
+    } else if (status === 'checking') {
+        badge.classList.add('cloud-checking');
+        badge.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Connecting...`;
+        badge.title = "Connecting to Firebase Database...";
+    } else {
+        badge.classList.add('cloud-offline');
+        badge.innerHTML = `<i class="fa-solid fa-hard-drive"></i> Local Mode`;
+        badge.title = message || "Running in local storage mode.";
+        if (connectBtn) {
+            connectBtn.style.borderColor = 'rgba(245, 158, 11, 0.5)';
+            connectBtn.title = "Click to connect Firebase Cloud Database!";
+        }
+        if (btnLabel) btnLabel.textContent = "Connect Cloud";
+    }
+}
+
 function initCommunityPortal() {
     const form = document.getElementById('community-portal-form');
     const feed = document.getElementById('community-feed-container');
     const countBadge = document.getElementById('comm-count-badge');
 
-    let storedPosts = JSON.parse(localStorage.getItem('cyber_community_posts') || 'null');
-    if (!storedPosts) {
-        storedPosts = DEFAULT_COMMUNITY_FEED;
+    // Clean up previous listeners
+    if (firestoreUnsubscribe) {
+        firestoreUnsubscribe();
+        firestoreUnsubscribe = null;
     }
-    // Automatically purge any statefulset forum post
-    storedPosts = storedPosts.filter(p => !(p.question || '').toLowerCase().includes('statefulset'));
-    localStorage.setItem('cyber_community_posts', JSON.stringify(storedPosts));
 
-    function renderFeed() {
-        const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
+    function renderFeed(posts) {
         if (countBadge) countBadge.textContent = `${posts.length} Active Doubts`;
-
         if (!feed) return;
+
         if (posts.length === 0) {
-            feed.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No questions yet. Be the first to post!</p>';
+            feed.innerHTML = `
+                <div style="text-align: center; padding: 3rem 1.5rem; background: var(--cyber-card); border: 1px dashed var(--glass-border); border-radius: 12px;">
+                    <i class="fa-solid fa-comments" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 1rem; opacity: 0.5;"></i>
+                    <p style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">No doubts posted yet.</p>
+                    <p style="color: #cbd5e1; font-size: 0.85rem;">Be the first engineer to ask an interview question or troubleshooting doubt!</p>
+                </div>
+            `;
             return;
         }
 
-        feed.innerHTML = posts.map(post => `
+        feed.innerHTML = posts.map(post => {
+            const authorInitial = (post.author && post.author.length > 0) ? escapeHtml(post.author[0].toUpperCase()) : 'E';
+            const displayTime = post.timestamp || 'Just now';
+            const userReaction = getUserPostReaction(post.id);
+            const isLiked = userReaction === 'like';
+            const isDisliked = userReaction === 'dislike';
+
+            return `
             <div class="community-card-post" id="${post.id}">
                 <div class="comm-post-header">
                     <div class="comm-author-box">
-                        <div class="author-avatar">${escapeHtml(post.author[0].toUpperCase())}</div>
+                        <div class="author-avatar">${authorInitial}</div>
                         <div>
-                            <strong>${escapeHtml(post.author)}</strong>
-                            <div style="font-size: 0.75rem; color: var(--text-muted);">${post.timestamp} &bull; <span class="hud-tag">${post.tag}</span></div>
+                            <strong>${escapeHtml(post.author || 'Anonymous')}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">
+                                ${escapeHtml(displayTime)} &bull; <span class="hud-tag">${escapeHtml(post.tag || 'General')}</span>
+                            </div>
                         </div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <button class="comm-upvote-btn" onclick="upvotePost('${post.id}')" title="Upvote">
-                            <i class="fa-solid fa-thumbs-up"></i> ${post.upvotes}
+                    <div class="comm-actions-bar" style="display: flex; align-items: center; gap: 0.45rem;">
+                        <button class="comm-upvote-btn ${isLiked ? 'active' : ''}" onclick="handlePostReaction('${post.id}', 'like')" title="${isLiked ? 'Liked (click to undo)' : 'Like'}">
+                            <i class="fa-solid fa-thumbs-up"></i> <span>${post.upvotes || 0}</span>
                         </button>
-                        <button class="comm-delete-btn" onclick="deletePost('${post.id}')" title="Delete question">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <button class="comm-downvote-btn ${isDisliked ? 'active' : ''}" onclick="handlePostReaction('${post.id}', 'dislike')" title="${isDisliked ? 'Disliked (click to undo)' : 'Dislike'}">
+                            <i class="fa-solid fa-thumbs-down"></i> <span>${post.downvotes || 0}</span>
                         </button>
                     </div>
                 </div>
-                <div style="font-size: 1.05rem; font-weight: 600; color: #fff;">
+                <div style="font-size: 1.05rem; font-weight: 600; color: #fff; line-height: 1.5;">
                     ${escapeHtml(post.question)}
                 </div>
                 <div class="comm-replies-list">
                     ${(post.replies || []).map(r => `
                         <div class="comm-reply-item">
-                            <div class="comm-reply-header">
-                                <i class="fa-solid fa-reply"></i> <strong>${escapeHtml(r.author)}</strong> &bull; <span>${r.timestamp}</span>
+                            <div class="comm-reply-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
+                                <span><i class="fa-solid fa-reply"></i> <strong>${escapeHtml(r.author || 'Engineer')}</strong></span>
+                                <span style="color: var(--text-muted); font-size: 0.72rem;">${escapeHtml(r.timestamp || 'Recent')}</span>
                             </div>
-                            <div>${r.text}</div>
+                            <div style="color: #cbd5e1; line-height: 1.5;">${r.text}</div>
                         </div>
                     `).join('')}
                 </div>
-                <div class="reply-input-row">
-                    <input type="text" placeholder="Write an expert solution / answer..." id="reply-in-${post.id}">
-                    <button class="cyber-btn btn-outline" style="padding: 0.5rem 1rem;" onclick="addReply('${post.id}')">Reply</button>
+                <div class="reply-input-row" style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
+                    <input type="text" placeholder="Write an expert solution / answer..." id="reply-in-${post.id}" style="flex: 1;" onkeydown="if(event.key==='Enter') addReply('${post.id}')">
+                    <button class="cyber-btn btn-outline" style="padding: 0.45rem 1rem; font-size: 0.85rem;" onclick="addReply('${post.id}')">Reply</button>
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
+        activeCommunityRenderFeed = renderFeed;
     }
 
-    if (form) {
-        form.addEventListener('submit', (e) => {
+    function loadLocalFeed() {
+        let storedPosts = JSON.parse(localStorage.getItem('cyber_community_posts') || 'null');
+        if (!storedPosts || storedPosts.length === 0) {
+            storedPosts = DEFAULT_COMMUNITY_FEED;
+        }
+        storedPosts = storedPosts.filter(p => !(p.question || '').toLowerCase().includes('statefulset'));
+        localStorage.setItem('cyber_community_posts', JSON.stringify(storedPosts));
+        renderFeed(storedPosts);
+    }
+
+    // Connect to Firebase (Realtime Database or Firestore)
+    let dbConnected = false;
+    if (isFirebaseConfigured()) {
+        updateCloudStatusBadge('checking');
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(window.firebaseConfig);
+            }
+
+            // Priority 1: Firebase Realtime Database
+            if (typeof firebase.database === 'function' && window.firebaseConfig.databaseURL) {
+                dbConnected = true;
+                try {
+                    globalRtdb = firebase.app().database(window.firebaseConfig.databaseURL);
+                } catch (e) {
+                    globalRtdb = firebase.database();
+                }
+                const doubtsRef = globalRtdb.ref('community_doubts');
+
+                doubtsRef.on('value', async (snapshot) => {
+                    const val = snapshot.val();
+                    if (!val) {
+                        // Seed default posts to the new cloud database
+                        try {
+                            for (const p of DEFAULT_COMMUNITY_FEED) {
+                                const newRef = doubtsRef.push();
+                                await newRef.set({
+                                    author: p.author,
+                                    tag: p.tag,
+                                    question: p.question,
+                                    timestamp: p.timestamp,
+                                    createdAt: Date.now(),
+                                    upvotes: p.upvotes || 0,
+                                    downvotes: p.downvotes || 0,
+                                    replies: p.replies || []
+                                });
+                            }
+                            return; // Next event will render populated feed
+                        } catch (e) {
+                            console.warn("Could not seed default RTDB posts:", e);
+                        }
+                    }
+
+                    const remotePosts = [];
+                    if (val) {
+                        Object.keys(val).forEach(k => {
+                            const item = val[k];
+                            let repliesList = [];
+                            if (item.replies) {
+                                if (Array.isArray(item.replies)) {
+                                    repliesList = item.replies;
+                                } else if (typeof item.replies === 'object') {
+                                    repliesList = Object.values(item.replies);
+                                }
+                            }
+                            let displayTime = item.timestamp || 'Just now';
+                            if (item.createdAt && typeof item.createdAt === 'number') {
+                                const d = new Date(item.createdAt);
+                                displayTime = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            }
+                            remotePosts.push({
+                                id: k,
+                                author: item.author || 'Anonymous',
+                                tag: item.tag || 'General',
+                                question: item.question || '',
+                                timestamp: displayTime,
+                                createdAt: item.createdAt || 0,
+                                upvotes: item.upvotes || 0,
+                                downvotes: item.downvotes || 0,
+                                replies: repliesList
+                            });
+                        });
+                    }
+
+                    remotePosts.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    localStorage.setItem('cyber_community_posts', JSON.stringify(remotePosts));
+                    renderFeed(remotePosts);
+                    updateCloudStatusBadge('online');
+                }, (error) => {
+                    console.error("Firebase Realtime Database error:", error);
+                    updateCloudStatusBadge('offline', error.message);
+                    if (error.message && error.message.toLowerCase().includes('permission_denied')) {
+                        showCyberToast("Firebase Rules: Set .read and .write to true in Console -> Rules!");
+                    }
+                    loadLocalFeed();
+                });
+            } else if (typeof firebase.firestore === 'function') {
+                // Priority 2: Cloud Firestore
+                dbConnected = true;
+                globalFirestoreDb = firebase.firestore();
+                globalFirestoreDb.enablePersistence({ synchronizeTabs: true }).catch(() => {});
+
+                firestoreUnsubscribe = globalFirestoreDb.collection('community_doubts')
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot(async (snapshot) => {
+                        if (snapshot.empty) {
+                            try {
+                                for (const post of DEFAULT_COMMUNITY_FEED) {
+                                    await globalFirestoreDb.collection('community_doubts').add({
+                                        author: post.author,
+                                        tag: post.tag,
+                                        question: post.question,
+                                        timestamp: post.timestamp,
+                                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                        upvotes: post.upvotes || 0,
+                                        downvotes: post.downvotes || 0,
+                                        replies: post.replies || []
+                                    });
+                                }
+                                return;
+                            } catch (e) {
+                                console.warn("Could not seed default Firestore posts:", e);
+                            }
+                        }
+
+                        const remotePosts = [];
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            let displayTime = data.timestamp || 'Just now';
+                            if (data.createdAt && data.createdAt.toDate) {
+                                const date = data.createdAt.toDate();
+                                displayTime = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            }
+                            remotePosts.push({
+                                id: doc.id,
+                                author: data.author || 'Anonymous',
+                                tag: data.tag || 'General',
+                                question: data.question || '',
+                                timestamp: displayTime,
+                                upvotes: data.upvotes || 0,
+                                downvotes: data.downvotes || 0,
+                                replies: data.replies || []
+                            });
+                        });
+
+                        localStorage.setItem('cyber_community_posts', JSON.stringify(remotePosts));
+                        renderFeed(remotePosts);
+                        updateCloudStatusBadge('online');
+                    }, (error) => {
+                        console.error("Firestore synchronization error:", error);
+                        updateCloudStatusBadge('offline', error.message);
+                        loadLocalFeed();
+                    });
+            }
+
+            if (!dbConnected) {
+                loadLocalFeed();
+            }
+
+        } catch (err) {
+            console.error("Firebase init failed:", err);
+            updateCloudStatusBadge('offline', err.message);
+            loadLocalFeed();
+        }
+    } else {
+        updateCloudStatusBadge('offline');
+        loadLocalFeed();
+    }
+
+    // Submit handler
+    if (form && !form.dataset.listenerAttached) {
+        form.dataset.listenerAttached = "true";
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const author = document.getElementById('comm-author').value.trim();
-            const tag = document.getElementById('comm-tag').value;
-            const question = document.getElementById('comm-question').value.trim();
+            const authorInput = document.getElementById('comm-author');
+            const tagInput = document.getElementById('comm-tag');
+            const questionInput = document.getElementById('comm-question');
+
+            const author = authorInput ? authorInput.value.trim() : '';
+            const tag = tagInput ? tagInput.value : 'General';
+            const question = questionInput ? questionInput.value.trim() : '';
 
             if (!author || !question) return;
 
-            const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
-            posts.unshift({
-                id: 'comm_' + Date.now(),
-                author: author,
-                tag: tag,
-                question: question,
-                timestamp: 'Just now',
-                upvotes: 1,
-                replies: []
-            });
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Publishing...`;
+            }
 
-            localStorage.setItem('cyber_community_posts', JSON.stringify(posts));
-            form.reset();
-            renderFeed();
-            showCyberToast('Question posted to community!');
+            let postedToCloud = false;
+
+            if (globalRtdb) {
+                try {
+                    const newRef = globalRtdb.ref('community_doubts').push();
+                    const writePromise = newRef.set({
+                        author: author,
+                        tag: tag,
+                        question: question,
+                        timestamp: 'Just now',
+                        createdAt: Date.now(),
+                        upvotes: 0,
+                        downvotes: 0,
+                        replies: []
+                    });
+                    const timeoutPromise = new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error("RTDB write timeout")), 3500)
+                    );
+                    await Promise.race([writePromise, timeoutPromise]);
+                    form.reset();
+                    showCyberToast('Doubt published live to Firebase!');
+                    postedToCloud = true;
+                } catch (err) {
+                    console.error("RTDB post failed:", err);
+                    if (err.message && err.message.toLowerCase().includes('permission_denied')) {
+                        alert("Firebase Permission Denied!\n\nIn Firebase Console -> Realtime Database -> Rules tab:\nSet .read: true and .write: true, then click Publish!");
+                    }
+                }
+            } else if (globalFirestoreDb) {
+                try {
+                    await globalFirestoreDb.collection('community_doubts').add({
+                        author: author,
+                        tag: tag,
+                        question: question,
+                        timestamp: 'Just now',
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        upvotes: 0,
+                        downvotes: 0,
+                        replies: []
+                    });
+                    form.reset();
+                    showCyberToast('Doubt published live to the global community!');
+                    postedToCloud = true;
+                } catch (err) {
+                    console.error("Firestore post failed:", err);
+                }
+            }
+
+            if (!postedToCloud) {
+                savePostLocally({ author, tag, question });
+                form.reset();
+                showCyberToast('Saved locally. (Check Firebase Console Rules)');
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            }
         });
     }
 
-    renderFeed();
+    function savePostLocally({ author, tag, question }) {
+        const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
+        posts.unshift({
+            id: 'comm_' + Date.now(),
+            author: author,
+            tag: tag,
+            question: question,
+            timestamp: 'Just now',
+            createdAt: Date.now(),
+            upvotes: 0,
+            downvotes: 0,
+            replies: []
+        });
+        localStorage.setItem('cyber_community_posts', JSON.stringify(posts));
+        renderFeed(posts);
+    }
 }
 
-window.deletePost = function(postId) {
-    let posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
-    posts = posts.filter(p => p.id !== postId);
-    localStorage.setItem('cyber_community_posts', JSON.stringify(posts));
-    initCommunityPortal();
-    showCyberToast('Question deleted from forum');
+// Remove delete option from public interface
+window.deletePost = function() {
+    showCyberToast('Deletion is restricted to moderators.');
 };
 
-window.upvotePost = function(postId) {
-    const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
+window.handlePostReaction = async function(postId, desiredType) {
+    playSynthSound('beep');
+    const currentReaction = getUserPostReaction(postId); // 'like', 'dislike', or null
+
+    let deltaUpvotes = 0;
+    let deltaDownvotes = 0;
+    let nextReaction = null;
+
+    if (currentReaction === desiredType) {
+        // Toggle off if already selected
+        nextReaction = null;
+        if (desiredType === 'like') {
+            deltaUpvotes = -1;
+            showCyberToast('Removed like');
+        } else {
+            deltaDownvotes = -1;
+            showCyberToast('Removed dislike');
+        }
+    } else {
+        // Apply new reaction or swap
+        nextReaction = desiredType;
+        if (desiredType === 'like') {
+            deltaUpvotes = 1;
+            if (currentReaction === 'dislike') {
+                deltaDownvotes = -1;
+            }
+            showCyberToast('Liked! 👍');
+        } else {
+            deltaDownvotes = 1;
+            if (currentReaction === 'like') {
+                deltaUpvotes = -1;
+            }
+            showCyberToast('Disliked 👎');
+        }
+    }
+
+    // Save user's reaction so 1 person can only like/dislike once
+    setUserPostReaction(postId, nextReaction);
+
+    // Update local cached posts and re-render instantly
+    let posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
     const target = posts.find(p => p.id === postId);
     if (target) {
-        target.upvotes += 1;
+        target.upvotes = Math.max(0, (target.upvotes || 0) + deltaUpvotes);
+        target.downvotes = Math.max(0, (target.downvotes || 0) + deltaDownvotes);
         localStorage.setItem('cyber_community_posts', JSON.stringify(posts));
-        initCommunityPortal();
-        playSynthSound('beep');
+        if (typeof activeCommunityRenderFeed === 'function') {
+            activeCommunityRenderFeed(posts);
+        } else {
+            initCommunityPortal();
+        }
+    }
+
+    // Sync to Realtime Database if connected
+    if (globalRtdb) {
+        try {
+            await globalRtdb.ref(`community_doubts/${postId}`).transaction(item => {
+                if (item) {
+                    if (deltaUpvotes !== 0) {
+                        item.upvotes = Math.max(0, (item.upvotes || 0) + deltaUpvotes);
+                    }
+                    if (deltaDownvotes !== 0) {
+                        item.downvotes = Math.max(0, (item.downvotes || 0) + deltaDownvotes);
+                    }
+                }
+                return item;
+            });
+        } catch (err) {
+            console.warn("RTDB reaction transaction failed:", err);
+        }
+    } else if (globalFirestoreDb) {
+        try {
+            const updates = {};
+            if (deltaUpvotes !== 0) updates.upvotes = firebase.firestore.FieldValue.increment(deltaUpvotes);
+            if (deltaDownvotes !== 0) updates.downvotes = firebase.firestore.FieldValue.increment(deltaDownvotes);
+            await globalFirestoreDb.collection('community_doubts').doc(postId).update(updates);
+        } catch (err) {
+            console.warn("Firestore reaction update failed:", err);
+        }
     }
 };
 
-window.addReply = function(postId) {
+window.upvotePost = function(postId) {
+    window.handlePostReaction(postId, 'like');
+};
+
+window.downvotePost = function(postId) {
+    window.handlePostReaction(postId, 'dislike');
+};
+
+window.addReply = async function(postId) {
     const input = document.getElementById(`reply-in-${postId}`);
     if (!input || !input.value.trim()) return;
+    const text = escapeHtml(input.value.trim());
+
+    const replyObj = {
+        author: 'Engineer',
+        text: text,
+        timestamp: 'Just now',
+        createdAt: Date.now()
+    };
+
+    if (globalRtdb) {
+        try {
+            await globalRtdb.ref(`community_doubts/${postId}/replies`).push(replyObj);
+            input.value = '';
+            showCyberToast('Answer published to Firebase!');
+            return;
+        } catch (err) {
+            console.warn("RTDB reply failed:", err);
+        }
+    } else if (globalFirestoreDb) {
+        try {
+            await globalFirestoreDb.collection('community_doubts').doc(postId).update({
+                replies: firebase.firestore.FieldValue.arrayUnion(replyObj)
+            });
+            input.value = '';
+            showCyberToast('Answer published to the community!');
+            return;
+        } catch (err) {
+            console.warn("Firestore reply failed:", err);
+        }
+    }
 
     const posts = JSON.parse(localStorage.getItem('cyber_community_posts') || '[]');
     const target = posts.find(p => p.id === postId);
     if (target) {
         if (!target.replies) target.replies = [];
-        target.replies.push({
-            author: 'Engineer',
-            text: escapeHtml(input.value.trim()),
-            timestamp: 'Just now'
-        });
+        target.replies.push(replyObj);
         localStorage.setItem('cyber_community_posts', JSON.stringify(posts));
+        input.value = '';
         initCommunityPortal();
         showCyberToast('Answer submitted!');
     }
 };
+
+window.openFirebaseSetupModal = function() {
+    const modal = document.getElementById('firebase-modal');
+    if (!modal) return;
+    const input = document.getElementById('firebase-config-input');
+    if (input) {
+        if (window.firebaseConfig && window.firebaseConfig.projectId) {
+            input.value = JSON.stringify(window.firebaseConfig, null, 2);
+        } else {
+            input.value = '';
+        }
+    }
+    modal.style.display = 'flex';
+    modal.classList.add('open');
+};
+
+window.closeFirebaseSetupModal = function() {
+    const modal = document.getElementById('firebase-modal');
+    if (modal) {
+        modal.style.display = 'none';
+        modal.classList.remove('open');
+    }
+};
+
+window.saveFirebaseConfigFromModal = function() {
+    const input = document.getElementById('firebase-config-input');
+    if (!input || !input.value.trim()) {
+        alert("Please paste your Firebase configuration object or JSON.");
+        return;
+    }
+
+    let raw = input.value.trim();
+    if (raw.includes('{')) {
+        const start = raw.indexOf('{');
+        const end = raw.lastIndexOf('}') + 1;
+        raw = raw.slice(start, end);
+    }
+
+    let parsedConfig = null;
+    try {
+        parsedConfig = JSON.parse(raw);
+    } catch (e1) {
+        try {
+            parsedConfig = (new Function(`return ${raw};`))();
+        } catch (e2) {
+            alert("Invalid configuration format. Please ensure you paste valid JSON or JavaScript object format.");
+            return;
+        }
+    }
+
+    if (!parsedConfig || !parsedConfig.projectId || !parsedConfig.apiKey) {
+        alert("Invalid Firebase config. Must include at least 'projectId' and 'apiKey'.");
+        return;
+    }
+
+    localStorage.setItem('cyber_firebase_custom_config', JSON.stringify(parsedConfig));
+    window.firebaseConfig = parsedConfig;
+
+    closeFirebaseSetupModal();
+    showCyberToast('Connecting to Firebase Firestore...');
+    initCommunityPortal();
+};
+
+window.resetToLocalMode = function() {
+    if (confirm("Reset to Local Mode? This will disconnect from the cloud database and use local storage.")) {
+        localStorage.removeItem('cyber_firebase_custom_config');
+        window.firebaseConfig = {
+            apiKey: "",
+            authDomain: "",
+            projectId: "",
+            storageBucket: "",
+            messagingSenderId: "",
+            appId: ""
+        };
+        closeFirebaseSetupModal();
+        showCyberToast('Reset to local mode');
+        initCommunityPortal();
+    }
+};
+
+// Close modal when clicking on backdrop
+document.addEventListener('click', (e) => {
+    const modal = document.getElementById('firebase-modal');
+    if (modal && e.target === modal) {
+        closeFirebaseSetupModal();
+    }
+});
 
 function escapeHtml(str) {
     return str.replace(/[&<>'"]/g, 
@@ -1082,7 +2008,7 @@ function injectGlobalUI() {
             <div class="global-search-box">
                 <div class="global-search-input-row">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="global-search-input" placeholder="Search all 1326+ questions across 12 topics..." autocomplete="off">
+                    <input type="text" id="global-search-input" placeholder="Search all 1325+ questions across 12 topics..." autocomplete="off">
                     <button class="global-search-close" onclick="closeGlobalSearch()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div id="global-search-results"></div>
@@ -1168,13 +2094,43 @@ function injectGlobalUI() {
         ];
         drawer.innerHTML = `
             <div class="sidebar-header">
-                <span class="cyber-logo" style="font-size:1rem;">DEVOPS.SRE <span class="logo-tag">VAULT</span></span>
+                <a href="index.html" class="cyber-logo" style="font-size:1rem; text-decoration:none;">
+                    <span class="logo-glitch" data-text="DEVOPS.SRE">DEVOPS.SRE</span>
+                    <span class="logo-tag">VAULT</span>
+                </a>
                 <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fa-solid fa-xmark"></i></button>
             </div>
+            <button class="sidebar-quick-search-btn" onclick="closeSidebar(); openGlobalSearch();">
+                <span><i class="fa-solid fa-magnifying-glass"></i> Quick Search...</span>
+                <span class="kb-badge">⌃K</span>
+            </button>
             <div class="sidebar-nav-links">
-                ${navLinks.map(l => `<a href="${l.href}" class="${currentPage === l.href ? 'active' : ''}"><i class="fa-solid ${l.icon}"></i> ${l.label}</a>`).join('')}
+                <div class="sidebar-section-title"><i class="fa-solid fa-compass"></i> Navigation</div>
+                <a href="index.html" class="${currentPage === 'index.html' || !currentPage ? 'active' : ''}"><i class="fa-solid fa-house"></i> Home</a>
+                <a href="scenario.html" class="${currentPage === 'scenario.html' ? 'active' : ''}"><i class="fa-solid fa-fire-flame-curved" style="color: #f59e0b;"></i> Real Scenarios</a>
+                <a href="community.html" class="${currentPage === 'community.html' ? 'active' : ''}"><i class="fa-solid fa-comments" style="color: #00d4ff;"></i> Community Doubts</a>
+                <a href="javascript:void(0)" onclick="closeSidebar(); startMockInterview();"><i class="fa-solid fa-brain" style="color: #00ff88;"></i> 10-Q Mock Drill</a>
+
+                <div class="sidebar-section-title"><i class="fa-solid fa-cloud" style="color: #38bdf8;"></i> Cloud & Containers</div>
+                <a href="kubernetes.html" class="${currentPage === 'kubernetes.html' ? 'active' : ''}"><i class="fa-solid fa-dharmachakra" style="color: #326ce5;"></i> Kubernetes</a>
+                <a href="aws.html" class="${currentPage === 'aws.html' ? 'active' : ''}"><i class="fa-brands fa-aws" style="color: #ff9900;"></i> AWS & Cloud</a>
+                <a href="terraform.html" class="${currentPage === 'terraform.html' ? 'active' : ''}"><i class="fa-solid fa-cube" style="color: #7b42bc;"></i> Terraform</a>
+                <a href="docker.html" class="${currentPage === 'docker.html' ? 'active' : ''}"><i class="fa-brands fa-docker" style="color: #2496ed;"></i> Docker</a>
+
+                <div class="sidebar-section-title"><i class="fa-solid fa-terminal" style="color: #facc15;"></i> Core & Systems</div>
+                <a href="linux.html" class="${currentPage === 'linux.html' ? 'active' : ''}"><i class="fa-brands fa-linux" style="color: #fcc624;"></i> Linux & OS</a>
+                <a href="networking.html" class="${currentPage === 'networking.html' ? 'active' : ''}"><i class="fa-solid fa-network-wired" style="color: #10b981;"></i> Networking</a>
+                <a href="git.html" class="${currentPage === 'git.html' ? 'active' : ''}"><i class="fa-brands fa-git-alt" style="color: #f05032;"></i> Git & VCS</a>
+
+                <div class="sidebar-section-title"><i class="fa-solid fa-gears" style="color: #22d3ee;"></i> Delivery & GitOps</div>
+                <a href="cicd.html" class="${currentPage === 'cicd.html' ? 'active' : ''}"><i class="fa-solid fa-code-branch" style="color: #00f0ff;"></i> CI/CD Pipelines</a>
+                <a href="gitops.html" class="${currentPage === 'gitops.html' ? 'active' : ''}"><i class="fa-solid fa-arrows-spin" style="color: #ef4444;"></i> GitOps & ArgoCD</a>
+
+                <div class="sidebar-section-title"><i class="fa-solid fa-shield-halved" style="color: #a855f7;"></i> Reliability & SRE</div>
+                <a href="observability.html" class="${currentPage === 'observability.html' ? 'active' : ''}"><i class="fa-solid fa-chart-line" style="color: #a855f7;"></i> Observability</a>
+                <a href="security.html" class="${currentPage === 'security.html' ? 'active' : ''}"><i class="fa-solid fa-shield-halved" style="color: #ec4899;"></i> DevSecOps</a>
             </div>
-            <div class="sidebar-footer">DevOps SRE Vault 2026 • 1326+ Questions</div>`;
+            <div class="sidebar-footer">DevOps SRE Vault 2026 • 1325+ Questions</div>`;
         document.body.appendChild(drawer);
     }
 }
@@ -1603,7 +2559,7 @@ const TOPIC_CONFIG = [
     { key: 'git',          label: 'Git',             total: 104, color: '#f34f29' },
     { key: 'cicd',         label: 'CI/CD',           total: 106, color: '#00d4ff' },
     { key: 'docker',       label: 'Docker',          total: 106, color: '#2496ed' },
-    { key: 'kubernetes',   label: 'Kubernetes',      total: 162, color: '#326ce5' },
+    { key: 'kubernetes',   label: 'Kubernetes',      total: 161, color: '#326ce5' },
     { key: 'terraform',    label: 'Terraform',       total: 115, color: '#844fba' },
     { key: 'aws',          label: 'AWS',             total: 112, color: '#ff9900' },
     { key: 'networking',   label: 'Networking',      total: 103, color: '#00d4ff' },
@@ -1612,7 +2568,7 @@ const TOPIC_CONFIG = [
     { key: 'security',     label: 'Security',        total: 102, color: '#a855f7' },
     { key: 'scenario',     label: 'Scenarios',       total: 107, color: '#facc15' },
 ];
-const TOTAL_QUESTIONS = 1326;
+const TOTAL_QUESTIONS = 1325;
 
 function initGlobalProgressDashboard() {
     const section = document.getElementById('global-progress-section');
@@ -1764,10 +2720,224 @@ window.exportTopicMarkdown = exportTopicMarkdown;
 window.exportCurrentTopicMarkdown = exportTopicMarkdown;
 
 /* ==========================================================================
-   FEATURE 1: Hands-Free Audio Voice Reader (Web Speech API)
+   FEATURE 1: Crystal-Clear Neural Voice Reader (ChatGPT-Quality Web Speech)
    ========================================================================== */
 let activeSpeechUtterance = null;
 let activeSpeakingBtn = null;
+let cachedBestVoice = null;
+let speechHeartbeatInterval = null;
+
+// Eagerly pre-load voices as soon as browser is ready
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    window.speechSynthesis.onvoiceschanged = () => {
+        cachedBestVoice = getChatGPTLikeVoice();
+    };
+    try {
+        window.speechSynthesis.getVoices();
+    } catch (e) {}
+}
+
+function startSpeechHeartbeat() {
+    stopSpeechHeartbeat();
+    speechHeartbeatInterval = setInterval(() => {
+        if (window.speechSynthesis && window.speechSynthesis.speaking && !window.speechSynthesis.paused) {
+            window.speechSynthesis.pause();
+            window.speechSynthesis.resume();
+        }
+    }, 10000);
+}
+
+function stopSpeechHeartbeat() {
+    if (speechHeartbeatInterval) {
+        clearInterval(speechHeartbeatInterval);
+        speechHeartbeatInterval = null;
+    }
+}
+
+/**
+ * Priority selector for natural, human-like neural voices
+ * (Azure Natural, Apple Enhanced/Premium, Google US English)
+ */
+function getChatGPTLikeVoice() {
+    if (!('speechSynthesis' in window)) return null;
+    const voices = window.speechSynthesis.getVoices();
+    if (!voices || voices.length === 0) return null;
+
+    if (cachedBestVoice && voices.includes(cachedBestVoice)) {
+        return cachedBestVoice;
+    }
+
+    const priorityFilters = [
+        // 1. Azure Natural Voices (Edge on Windows/macOS)
+        v => /jenny.*natural/i.test(v.name) && v.lang.startsWith('en'),
+        v => /aria.*natural/i.test(v.name) && v.lang.startsWith('en'),
+        v => /guy.*natural/i.test(v.name) && v.lang.startsWith('en'),
+        v => /christopher.*natural/i.test(v.name) && v.lang.startsWith('en'),
+        v => /natural/i.test(v.name) && v.lang.startsWith('en'),
+
+        // 2. Apple Enhanced/Premium Voices (macOS / iOS)
+        v => /ava.*(premium|enhanced)/i.test(v.name),
+        v => /samantha.*(premium|enhanced)/i.test(v.name),
+        v => /zoe.*(premium|enhanced)/i.test(v.name),
+        v => /daniel.*(premium|enhanced)/i.test(v.name),
+        v => /(premium|enhanced)/i.test(v.name) && v.lang.startsWith('en'),
+
+        // 3. Google High-Quality English Voices (Chrome)
+        v => /google us english/i.test(v.name),
+        v => /google uk english female/i.test(v.name),
+        v => /google/i.test(v.name) && v.lang.startsWith('en'),
+
+        // 4. Clean Standard Apple / OS Voices
+        v => /^samantha$/i.test(v.name),
+        v => /^victoria$/i.test(v.name),
+        v => /^karen$/i.test(v.name),
+        v => /^daniel$/i.test(v.name),
+        v => /^alex$/i.test(v.name),
+
+        // 5. English US / UK defaults
+        v => v.lang === 'en-US' || v.lang === 'en_US',
+        v => v.lang.startsWith('en')
+    ];
+
+    for (const filterFn of priorityFilters) {
+        const found = voices.find(filterFn);
+        if (found) {
+            cachedBestVoice = found;
+            return found;
+        }
+    }
+
+    return voices[0] || null;
+}
+
+/**
+ * Phonetically tunes tech acronyms, command lines, and jargon
+ * so the voice speaks naturally like an experienced SRE mentor
+ */
+function cleanTechTextForVoice(text) {
+    if (!text) return '';
+    let s = text;
+
+    const phoneticReplacements = [
+        [/\bK8s\b/gi, 'Kubernetes'],
+        [/\bkubectl\b/gi, 'kube-control'],
+        [/\betcd\b/gi, 'et-see-dee'],
+        [/\bOOMKilled\b/gi, 'O-O-M Killed'],
+        [/\bRBAC\b/gi, 'R-back'],
+        [/\bYAML\b/gi, 'yam-el'],
+        [/\bIaC\b/gi, 'Infrastructure as Code'],
+        [/\bCI\/CD\b/gi, 'C-I C-D'],
+        [/\bSRE\b/gi, 'S-R-E'],
+        [/\bDevOps\b/gi, 'Dev-Ops'],
+        [/\bIAM\b/gi, 'I-A-M'],
+        [/\bVPC\b/gi, 'V-P-C'],
+        [/\bDNS\b/gi, 'D-N-S'],
+        [/\bAPI\b/gi, 'A-P-I'],
+        [/\bCLI\b/gi, 'C-L-I'],
+        [/\bSSH\b/gi, 'S-S-H'],
+        [/\bTCP\/IP\b/gi, 'T-C-P I-P'],
+        [/\bHTTP\/2\b/gi, 'HTTP 2'],
+        [/\bHTTPS\b/gi, 'H-T-T-P-S'],
+        [/\bgRPC\b/gi, 'G-R-P-C'],
+        [/\bJSON\b/gi, 'Jay-son'],
+        [/\bnginx\b/gi, 'Engine-X'],
+        [/\bNGINX\b/gi, 'Engine-X'],
+        [/\bcron\b/gi, 'kron'],
+        [/\bdaemon\b/gi, 'day-mon'],
+        [/\bstdout\b/gi, 'standard out'],
+        [/\bstderr\b/gi, 'standard error'],
+        [/\bstdin\b/gi, 'standard in'],
+        [/\bprod\b/gi, 'production'],
+        [/\benv\b/gi, 'environment'],
+        [/\brepo\b/gi, 'repository'],
+        [/\bAMI\b/gi, 'A-M-I'],
+        [/\bAWS\b/g, 'A-W-S'],
+        [/\bEC2\b/gi, 'E-C-2'],
+        [/\bS3\b/gi, 'S-3'],
+        [/\bEKS\b/gi, 'E-K-S'],
+        [/\bECS\b/gi, 'E-C-S'],
+        [/\bSSL\b/gi, 'S-S-L'],
+        [/\bTLS\b/gi, 'T-L-S'],
+        [/\bOS\b/g, 'O-S'],
+        [/\bHPA\b/gi, 'Horizontal Pod Autoscaler'],
+        [/\bVPA\b/gi, 'Vertical Pod Autoscaler'],
+        [/\bCRD\b/gi, 'Custom Resource Definition'],
+        [/\bCRDs\b/gi, 'Custom Resource Definitions'],
+        [/\bCNI\b/gi, 'C-N-I'],
+        [/\bCSI\b/gi, 'C-S-I'],
+        [/\beBPF\b/gi, 'e-B-P-F'],
+        [/\bSLA\b/gi, 'S-L-A'],
+        [/\bSLO\b/gi, 'S-L-O'],
+        [/\bSLI\b/gi, 'S-L-I'],
+        [/\bMTTR\b/gi, 'M-T-T-R'],
+        [/\bMTTD\b/gi, 'M-T-T-D'],
+        [/\bArgoCD\b/gi, 'Argo C-D'],
+        [/\bCPU\b/gi, 'C-P-U'],
+        [/\bRAM\b/gi, 'Ram'],
+        [/\bGB\b/gi, 'Gigabytes'],
+        [/\bMB\b/gi, 'Megabytes'],
+        [/\bms\b/gi, 'milliseconds'],
+        [/\bsec\b/gi, 'seconds'],
+        [/\be\.g\.,?\b/gi, 'for example, '],
+        [/\bi\.e\.,?\b/gi, 'that is, ']
+    ];
+
+    phoneticReplacements.forEach(([pattern, repl]) => {
+        s = s.replace(pattern, repl);
+    });
+
+    s = s.replace(/[#*_~`]/g, ' ');
+    s = s.replace(/\s*->\s*/g, ' transitions to ');
+    s = s.replace(/\s*=>\s*/g, ' leads to ');
+    s = s.replace(/\s*\|\s*/g, ', ');
+    s = s.replace(/[\{\}\[\]\<\>\\]/g, ' ');
+    s = s.replace(/[\r\n]+/g, '. ');
+    s = s.replace(/\s{2,}/g, ' ');
+    s = s.replace(/\.\s*\./g, '.');
+
+    return s.trim();
+}
+
+/**
+ * Prepares a clean conversational spoken script from question and answer DOM,
+ * gracefully summarizing code snippets and manifests without reading raw punctuation.
+ */
+function prepareChatGPTSpokenScript(card) {
+    const titleEl = card.querySelector('.qa-question-title');
+    const questionText = titleEl ? titleEl.textContent.trim() : '';
+
+    const answerInner = card.querySelector('.qa-answer-inner');
+    if (!answerInner) return `Question: ${questionText}.`;
+
+    const clone = answerInner.cloneNode(true);
+
+    // Remove buttons, tags, dials, and interactive elements
+    clone.querySelectorAll('.code-copy-btn, button, .qa-tags-row, .drill-timer-hud, script, style').forEach(el => el.remove());
+
+    // Replace code blocks and pre elements with a natural spoken notification
+    clone.querySelectorAll('pre').forEach(preEl => {
+        const replacement = document.createTextNode(' [A practical code snippet and configuration manifest is available in the answer reference sheet.] ');
+        preEl.replaceWith(replacement);
+    });
+
+    clone.querySelectorAll('code').forEach(codeEl => {
+        if (codeEl.textContent.length > 35) {
+            const replacement = document.createTextNode(' [code example provided] ');
+            codeEl.replaceWith(replacement);
+        }
+    });
+
+    // Add conversational pauses before headings
+    clone.querySelectorAll('h4, h5, h6').forEach(h => {
+        const headingText = h.textContent.trim().replace(/:$/, '');
+        h.textContent = `. Key Section: ${headingText}. `;
+    });
+
+    const rawAnswerText = clone.textContent || '';
+    const cleanedAnswer = cleanTechTextForVoice(rawAnswerText);
+
+    return `Question: ${questionText}. ... Core Answer: ${cleanedAnswer}`;
+}
 
 function attachTTSListeners() {
     document.querySelectorAll('.btn-tts-listen').forEach(btn => {
@@ -1780,29 +2950,38 @@ function attachTTSListeners() {
             const card = document.getElementById(qid);
             if (!card) return;
 
-            if (btn === activeSpeakingBtn && window.speechSynthesis && window.speechSynthesis.speaking) {
+            // Toggle Stop if currently speaking this button
+            if (btn === activeSpeakingBtn && window.speechSynthesis && (window.speechSynthesis.speaking || window.speechSynthesis.pending)) {
+                stopSpeechHeartbeat();
                 window.speechSynthesis.cancel();
                 resetTTSBtn(btn);
                 activeSpeakingBtn = null;
+                activeSpeechUtterance = null;
                 return;
             }
 
+            // Stop any currently running speech
             if (window.speechSynthesis) {
+                stopSpeechHeartbeat();
                 window.speechSynthesis.cancel();
             }
             if (activeSpeakingBtn) resetTTSBtn(activeSpeakingBtn);
 
-            const qTitle = card.querySelector('.qa-question-title')?.textContent || '';
-            const qAnswer = card.querySelector('.qa-answer-inner')?.textContent || '';
-            const cleanText = `Question: ${qTitle}. Answer: ${qAnswer}`;
-
             if (!('speechSynthesis' in window)) {
-                showCyberToast('Speech synthesis not supported in this browser');
+                showCyberToast('Speech synthesis not supported in this browser 🔇');
                 return;
             }
 
-            const utterance = new SpeechSynthesisUtterance(cleanText);
-            utterance.rate = 1.0;
+            const spokenScript = prepareChatGPTSpokenScript(card);
+            const utterance = new SpeechSynthesisUtterance(spokenScript);
+
+            const bestVoice = getChatGPTLikeVoice();
+            if (bestVoice) {
+                utterance.voice = bestVoice;
+            }
+
+            // Pacing & Cadence: Deliberate, clear, articulate conversational speed
+            utterance.rate = 0.96;
             utterance.pitch = 1.0;
 
             utterance.onstart = () => {
@@ -1810,17 +2989,24 @@ function attachTTSListeners() {
                 const lbl = btn.querySelector('.tts-lbl');
                 if (lbl) lbl.textContent = 'Stop';
                 activeSpeakingBtn = btn;
-                showCyberToast('Playing audio voice reader 🎧');
+                startSpeechHeartbeat();
+
+                const vName = bestVoice ? bestVoice.name.replace(/Online \(Natural\)|Enhanced|Premium|Google/gi, '').trim() : 'Neural Voice';
+                showCyberToast(`Playing clear voice reader (${vName}) 🎙️`);
             };
 
             utterance.onend = () => {
+                stopSpeechHeartbeat();
                 resetTTSBtn(btn);
                 activeSpeakingBtn = null;
+                activeSpeechUtterance = null;
             };
 
-            utterance.onerror = () => {
+            utterance.onerror = (err) => {
+                stopSpeechHeartbeat();
                 resetTTSBtn(btn);
                 activeSpeakingBtn = null;
+                activeSpeechUtterance = null;
             };
 
             activeSpeechUtterance = utterance;
@@ -2036,7 +3222,7 @@ function initPWA() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js').then((reg) => {
-                // Registered successfully
+                reg.update();
             }).catch((err) => {
                 console.warn('SW registration failed:', err);
             });

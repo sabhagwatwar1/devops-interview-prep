@@ -105,3 +105,4 @@ Subnets include Kubernetes tags required by the AWS Load Balancer Controller:
 | **RDS Multi-AZ** | Disabled (`multi_az = false`) | Enabled (`multi_az = true`) |
 | **RDS Instance** | `db.t4g.micro` | `db.r6g.large` |
 | **Storage Class** | `gp3` (3000 IOPS baseline included) | `gp3` with provisioned throughput |
+

@@ -32,3 +32,4 @@ output "credentials_secret_arn" {
   description = "The ARN of the AWS Secrets Manager secret containing database credentials"
   value       = aws_secretsmanager_secret.db_credentials.arn
 }
+

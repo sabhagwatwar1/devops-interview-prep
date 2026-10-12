@@ -197,3 +197,4 @@ If an infrastructure apply or destroy gets stuck, follow this clean teardown pro
    terraform destroy -target=module.vpc -auto-approve
    ```
 3. **Confirm zero orphaned resources in AWS Console** under VPC & EC2.
+

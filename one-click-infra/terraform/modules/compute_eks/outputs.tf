@@ -37,3 +37,4 @@ output "configure_kubectl_command" {
   description = "Run this AWS CLI command to update local kubeconfig"
   value       = "aws eks update-kubeconfig --name ${aws_eks_cluster.this.name}"
 }
+

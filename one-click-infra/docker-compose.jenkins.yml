@@ -24,3 +24,5 @@ volumes:
 networks:
   jenkins-net:
     name: one-click-jenkins-net
+
+

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DevOps & SRE Interview Preparation Platform | Production Master Vault</title>
-    <meta name="description" content="Ultimate DevOps & SRE interview preparation hub. 1326+ deep technical questions,  scenario incident triage, and flashcards.">
+    <meta name="description" content="Ultimate DevOps & SRE interview preparation hub. 1325+ deep technical questions,  scenario incident triage, and flashcards.">
     <!-- Google Fonts: Inter, Plus Jakarta Sans, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +14,7 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <!-- Cyberpunk UI Stylesheet -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2026.15">
     <!-- PWA & Mobile Optimization -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#04060e">
@@ -26,7 +26,7 @@
     <div class="cyber-grid-overlay"></div>
     
     <!-- Navigation Header -->
-    <header class="cyber-navbar">
+        <header class="cyber-navbar">
         <div class="nav-container">
             <a href="index.html" class="cyber-logo">
                 <span class="logo-glitch" data-text="DEVOPS.SRE">DEVOPS.SRE</span>
@@ -34,28 +34,207 @@
             </a>
             
             <nav class="nav-menu">
-                <a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a>
-<a href="kubernetes.html" class=""><i class="fa-solid fa-dharmachakra"></i> Kubernetes</a>
-<a href="terraform.html" class=""><i class="fa-solid fa-cube"></i> Terraform</a>
-<a href="linux.html" class=""><i class="fa-brands fa-linux"></i> Linux</a>
-<a href="aws.html" class=""><i class="fa-brands fa-aws"></i> AWS</a>
-<a href="cicd.html" class=""><i class="fa-solid fa-code-branch"></i> CI/CD</a>
-<a href="docker.html" class=""><i class="fa-brands fa-docker"></i> Docker</a>
-<a href="networking.html" class=""><i class="fa-solid fa-network-wired"></i> Networking</a>
-<a href="git.html" class=""><i class="fa-brands fa-git-alt"></i> Git</a>
-<a href="gitops.html" class=""><i class="fa-solid fa-arrows-spin"></i> GitOps</a>
-<a href="observability.html" class=""><i class="fa-solid fa-chart-line"></i> Observability</a>
-<a href="security.html" class=""><i class="fa-solid fa-shield-halved"></i> DevSecOps</a>
-<a href="scenario.html" class=""><i class="fa-solid fa-users-gear"></i> Scenarios</a>
-<a href="community.html" class=""><i class="fa-solid fa-comments"></i> Community</a>
+                <a href="index.html" class="nav-link active">
+                    <i class="fa-solid fa-house"></i> <span>Home</span>
+                </a>
+
+                <div class="nav-dropdown" id="topics-nav-dropdown">
+                    <button class="nav-dropdown-trigger" id="topics-menu-trigger" aria-expanded="false" aria-haspopup="true">
+                        <i class="fa-solid fa-layer-group"></i>
+                        <span>Topics</span>
+                        <span class="topics-badge-count">12</span>
+                        <i class="fa-solid fa-chevron-down nav-caret"></i>
+                    </button>
+
+                    <div class="mega-menu-panel" id="topics-mega-menu" role="menu">
+                        <div class="mega-menu-inner">
+                            <div class="mega-menu-top-bar">
+                                <div class="mega-top-left">
+                                    <span class="mega-pill-badge"><i class="fa-solid fa-graduation-cap"></i> 12 Specialization Vaults</span>
+                                    <span class="mega-top-info">1,325+ Curated Questions with Production Code & Spoken Audio Reader</span>
+                                </div>
+                                <a href="index.html#topics-grid" class="mega-view-grid-btn">
+                                    <span>Browse Vault Grid</span> <i class="fa-solid fa-arrow-right"></i>
+                                </a>
+                            </div>
+
+                            <div class="mega-menu-grid">
+                                <!-- Col 1: Cloud & Infra -->
+                                <div class="mega-group">
+                                    <div class="mega-group-title">
+                                        <span class="mega-group-dot" style="background: #38bdf8;"></span>
+                                        <span>Cloud & Infra</span>
+                                    </div>
+                                    <div class="mega-items-list">
+                                        <a href="kubernetes.html" class="mega-card " data-topic="kubernetes">
+                                            <div class="mega-icon-box" style="background: rgba(50, 108, 229, 0.14); color: #326ce5;">
+                                                <i class="fa-solid fa-dharmachakra"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Kubernetes <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Control Plane, Pods, CNI, HPA, RBAC</div>
+                                            </div>
+                                        </a>
+                                        <a href="aws.html" class="mega-card " data-topic="aws">
+                                            <div class="mega-icon-box" style="background: rgba(255, 153, 0, 0.14); color: #ff9900;">
+                                                <i class="fa-brands fa-aws"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">AWS & Cloud <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">VPC, IAM, EKS, ECS, S3, RDS</div>
+                                            </div>
+                                        </a>
+                                        <a href="terraform.html" class="mega-card " data-topic="terraform">
+                                            <div class="mega-icon-box" style="background: rgba(123, 66, 188, 0.14); color: #7b42bc;">
+                                                <i class="fa-solid fa-cube"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Terraform <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">State, Modules, Workspaces, IaC</div>
+                                            </div>
+                                        </a>
+                                        <a href="docker.html" class="mega-card " data-topic="docker">
+                                            <div class="mega-icon-box" style="background: rgba(36, 150, 237, 0.14); color: #2496ed;">
+                                                <i class="fa-brands fa-docker"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Docker <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Containers, Cgroups, Multi-stage</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Col 2: Core & Systems -->
+                                <div class="mega-group">
+                                    <div class="mega-group-title">
+                                        <span class="mega-group-dot" style="background: #facc15;"></span>
+                                        <span>Core & Systems</span>
+                                    </div>
+                                    <div class="mega-items-list">
+                                        <a href="linux.html" class="mega-card " data-topic="linux">
+                                            <div class="mega-icon-box" style="background: rgba(252, 198, 36, 0.14); color: #fcc624;">
+                                                <i class="fa-brands fa-linux"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Linux & OS <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Kernel, Signals, Memory, Systemd</div>
+                                            </div>
+                                        </a>
+                                        <a href="networking.html" class="mega-card " data-topic="networking">
+                                            <div class="mega-icon-box" style="background: rgba(16, 185, 129, 0.14); color: #10b981;">
+                                                <i class="fa-solid fa-network-wired"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Networking <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">TCP/IP, DNS, HTTP/2, TLS, Routing</div>
+                                            </div>
+                                        </a>
+                                        <a href="git.html" class="mega-card " data-topic="git">
+                                            <div class="mega-icon-box" style="background: rgba(240, 80, 50, 0.14); color: #f05032;">
+                                                <i class="fa-brands fa-git-alt"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Git & VCS <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Rebase, Internals, Cherry-pick</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Col 3: Delivery & GitOps -->
+                                <div class="mega-group">
+                                    <div class="mega-group-title">
+                                        <span class="mega-group-dot" style="background: #22d3ee;"></span>
+                                        <span>Delivery & GitOps</span>
+                                    </div>
+                                    <div class="mega-items-list">
+                                        <a href="cicd.html" class="mega-card " data-topic="cicd">
+                                            <div class="mega-icon-box" style="background: rgba(0, 240, 255, 0.14); color: #00f0ff;">
+                                                <i class="fa-solid fa-code-branch"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">CI/CD Pipelines <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Jenkins, Actions, Runners</div>
+                                            </div>
+                                        </a>
+                                        <a href="gitops.html" class="mega-card " data-topic="gitops">
+                                            <div class="mega-icon-box" style="background: rgba(239, 68, 68, 0.14); color: #ef4444;">
+                                                <i class="fa-solid fa-arrows-spin"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">GitOps & ArgoCD <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Sync Waves, Rollouts, Drift</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <!-- Col 4: Reliability & Security -->
+                                <div class="mega-group">
+                                    <div class="mega-group-title">
+                                        <span class="mega-group-dot" style="background: #a855f7;"></span>
+                                        <span>SRE & Security</span>
+                                    </div>
+                                    <div class="mega-items-list">
+                                        <a href="observability.html" class="mega-card " data-topic="observability">
+                                            <div class="mega-icon-box" style="background: rgba(168, 85, 247, 0.14); color: #a855f7;">
+                                                <i class="fa-solid fa-chart-line"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Observability <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Prometheus, Grafana, OTel</div>
+                                            </div>
+                                        </a>
+                                        <a href="security.html" class="mega-card " data-topic="security">
+                                            <div class="mega-icon-box" style="background: rgba(236, 72, 153, 0.14); color: #ec4899;">
+                                                <i class="fa-solid fa-shield-halved"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">DevSecOps <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Vault, Trivy, Falco, SAST</div>
+                                            </div>
+                                        </a>
+                                        <a href="scenario.html" class="mega-card " data-topic="scenario">
+                                            <div class="mega-icon-box" style="background: rgba(6, 182, 212, 0.14); color: #06b6d4;">
+                                                <i class="fa-solid fa-users-gear"></i>
+                                            </div>
+                                            <div class="mega-card-info">
+                                                <div class="mega-card-name">Real Scenarios <span class="q-pill">100+ Qs</span></div>
+                                                <div class="mega-card-sub">Outage Drills, Post-mortems</div>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mega-menu-bottom-bar">
+                                <div class="mega-bottom-hint">
+                                    <i class="fa-solid fa-bolt" style="color: var(--neon-cyan);"></i>
+                                    <span>Tip: Press <strong>⌘K</strong> or <strong>Ctrl+K</strong> from anywhere to instantly search across all questions</span>
+                                </div>
+                                <button class="mega-bottom-action-btn" onclick="startMockInterview()">
+                                    <i class="fa-solid fa-brain"></i> Start 10-Q Mock Drill
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a href="scenario.html" class="nav-link ">
+                    <i class="fa-solid fa-fire-flame-curved" style="color: #f59e0b;"></i> <span>Scenarios</span>
+                </a>
+                <a href="community.html" class="nav-link ">
+                    <i class="fa-solid fa-comments"></i> <span>Community</span>
+                </a>
             </nav>
 
             <div class="nav-controls">
-                <button id="global-search-trigger" aria-label="Global search">
-                    <i class="fa-solid fa-magnifying-glass"></i> Search <span class="kb-badge">⌃K</span>
+                <button id="global-search-trigger" class="nav-search-btn" aria-label="Global search">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span class="search-btn-label">Quick Search...</span> <span class="kb-badge">⌃K</span>
                 </button>
-                <button id="mock-interview-nav-btn" onclick="startMockInterview()">
-                    <i class="fa-solid fa-brain"></i> Mock Interview
+                <button id="mock-interview-nav-btn" class="nav-mock-btn" onclick="startMockInterview()">
+                    <i class="fa-solid fa-brain"></i> <span>Mock Drill</span>
                 </button>
                 <button class="cyber-mobile-toggle" aria-label="Open Menu">
                     <i class="fa-solid fa-bars-staggered"></i>
@@ -76,7 +255,7 @@
                         CRACK THE <span class="dynamic-color-devops-sre">DEVOPS & SRE</span> INTERVIEW
                     </h1>
                     <p class="hero-subtext">
-                        Over <strong>1326+ curated questions</strong> across 12 domains (100+ questions per topic), deep  real-time incident scenarios, 3D flashcards, and automated doubts solver for Junior, Mid-Level, and Senior/Staff Engineers.
+                        Over <strong>1325+ curated questions</strong> across 12 domains (100+ questions per topic), deep  real-time incident scenarios, 3D flashcards, and automated doubts solver for Junior, Mid-Level, and Senior/Staff Engineers.
                     </p>
 
                     <div class="hero-cta-group">
@@ -90,7 +269,7 @@
 
                     <div class="hero-stats-row">
                         <div class="hero-stat-item">
-                            <span class="stat-number count-up" data-target="1326">0</span>+
+                            <span class="stat-number count-up" data-target="1325">0</span>+
                             <span class="stat-label">Interview Q&As</span>
                         </div>
                         <div class="hero-stat-item">
@@ -105,9 +284,9 @@
                 </div>
 
                 <!-- Right Hero: Live Interactive DevOps Terminal -->
-                <div class="hero-right" data-aos="fade-left">
-                    <div class="cyber-terminal-card">
-                        <div class="terminal-bar">
+                <div class="hero-right" data-aos="fade-left" style="min-width: 0; width: 100%; display: flex; justify-content: center; align-items: center;">
+                    <div class="cyber-terminal-card" style="width: 580px; max-width: 100%; min-width: 0; height: 350px; min-height: 350px; max-height: 350px; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; flex-shrink: 0;">
+                        <div class="terminal-bar" style="height: 42px; min-height: 42px; max-height: 42px; flex-shrink: 0; box-sizing: border-box;">
                             <div class="term-dots">
                                 <span class="term-dot red"></span>
                                 <span class="term-dot yellow"></span>
@@ -116,9 +295,9 @@
                             <div class="term-title"><i class="fa-solid fa-terminal"></i> production-sre-shell -- bash</div>
                             <div class="term-status"><span class="pulse-green"></span> LIVE</div>
                         </div>
-                        <div class="terminal-body" id="cyber-terminal-body">
-                            <div class="terminal-line"><span class="term-prompt">sre@cloud-ops:~$</span> <span class="typed-command" id="terminal-typed-cmd">terraform plan -out=tfplan.binary</span></div>
-                            <div class="terminal-output" id="terminal-output-area">Terraform used the selected providers to generate the following execution plan:
+                        <div class="terminal-body" id="cyber-terminal-body" style="height: 308px; min-height: 308px; max-height: 308px; width: 100%; min-width: 0; flex: 1; display: flex; flex-direction: column; overflow: hidden; box-sizing: border-box; padding: 1.2rem;">
+                            <div class="terminal-line" style="display: block; width: 100%; min-width: 0; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; font-size: 0.84rem; line-height: 1.5; margin-bottom: 0.5rem; flex-shrink: 0;"><span class="term-prompt" style="color: var(--neon-green); font-weight: bold; margin-right: 0.45rem; display: inline;">sre@cloud-ops:~$</span><span class="typed-command" id="terminal-typed-cmd" style="color: #fff; font-weight: bold; display: inline; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere;">terraform plan -out=tfplan.binary</span></div>
+                            <div class="terminal-output" id="terminal-output-area" style="color: #00ff88; font-size: 0.8rem; line-height: 1.55; white-space: pre-wrap; word-break: break-word; overflow-wrap: anywhere; flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden; box-sizing: border-box; width: 100%;">Terraform used the selected providers to generate the following execution plan:
   # module.eks_cluster.aws_eks_node_group.workers[0] will be updated in-place
   ~ scaling_config {
       ~ desired_size = 6 -> 12
@@ -151,7 +330,7 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
                         <div class="vault-icon" style="color: #00ff88; border-color: #00ff88;">
                             <i class="fa-brands fa-linux"></i>
                         </div>
-                        <span class="vault-count-badge">104+ Q&As</span>
+                        <span class="vault-count-badge">107+ Q&As</span>
                     </div>
                     <h3 class="vault-title">Linux & OS Fundamentals</h3>
                     <p class="vault-desc">Kernel architecture, systemd, process lifecycle, virtual memory & page cache, Inodes, eBPF, and production performance tuning.</p>
@@ -207,12 +386,12 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
                         <div class="vault-icon" style="color: #326ce5; border-color: #326ce5;">
                             <i class="fa-solid fa-dharmachakra"></i>
                         </div>
-                        <span class="vault-count-badge">162+ Q&As</span>
+                        <span class="vault-count-badge">161+ Q&As</span>
                     </div>
                     <h3 class="vault-title">Kubernetes (K8s)</h3>
                     <p class="vault-desc">Control plane, Worker nodes, Pod lifecycle, Services, Ingress & Gateway API, PV/PVC, StorageClasses, RBAC, NetworkPolicies, and Autoscaling.</p>
                     <div class="vault-footer">
-                        <span class="explore-link" style="color: #326ce5;">Open Vault (162 Qs) <i class="fa-solid fa-arrow-right"></i></span>
+                        <span class="explore-link" style="color: #326ce5;">Open Vault (161 Qs) <i class="fa-solid fa-arrow-right"></i></span>
                     </div>
                 </a>
 
@@ -324,7 +503,7 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
                     <div>
                         <span class="hud-subtitle">RAPID DRILL TRAINER</span>
                         <h3>Interactive 3D Flashcard Mode</h3>
-                        <p>Test your candidate readiness before revealing technical answers. Available across all 1326+ questions!</p>
+                        <p>Test your candidate readiness before revealing technical answers. Available across all 1325+ questions!</p>
                     </div>
                     <a href="kubernetes.html" class="cyber-btn btn-primary"><i class="fa-solid fa-bolt"></i> Start Drill</a>
                 </div>
@@ -336,7 +515,7 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
             <div class="section-title-wrapper">
                 <span class="hud-subtitle">GET PERSONAL ASSISTANCE</span>
                 <h2 class="section-heading">Have a Doubt? Ask Directly</h2>
-                <p class="section-description">Send your query directly to our lead SRE via automated WhatsApp or Email dispatch.</p>
+                <p class="section-description">Send your query directly to our lead SRE via Email dispatch or discuss in our community forum.</p>
             </div>
 
             <div class="contact-hub-grid">
@@ -345,18 +524,11 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
                     <p>Get fast answers to interview questions or schedule mock technical interviews.</p>
                     
                     <div class="contact-channels-list">
-                        <a href="https://wa.me/919876543210?text=Hello%20Shriram%20I%20have%20a%20doubt%20from%20DevOps%20Prep" target="_blank" class="channel-card whatsapp">
-                            <i class="fa-brands fa-whatsapp"></i>
+                        <a href="#master-contact-form" class="channel-card email">
+                            <i class="fa-solid fa-envelope"></i>
                             <div>
-                                <strong>WhatsApp Automation</strong>
-                                <span>Instant direct chat with prefilled template</span>
-                            </div>
-                        </a>
-                        <a href="https://discord.gg/devops-prep" target="_blank" class="channel-card discord">
-                            <i class="fa-brands fa-discord"></i>
-                            <div>
-                                <strong>Discord Community</strong>
-                                <span>Join our 24/7 DevOps study server</span>
+                                <strong>Direct Email Support</strong>
+                                <span>Send query via secure form below</span>
                             </div>
                         </a>
                         <a href="community.html" class="channel-card forum">
@@ -366,40 +538,62 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
                                 <span>Post doubts visible to all engineers</span>
                             </div>
                         </a>
+                        <a href="https://discord.com/channels/1557713231521251368/1557713232091680800" target="_blank" class="channel-card discord">
+                            <i class="fa-brands fa-discord"></i>
+                            <div>
+                                <strong>Discord Community</strong>
+                                <span>Join our 24/7 DevOps study server</span>
+                            </div>
+                        </a>
+                        <a href="https://www.instagram.com/monkofuptime/" target="_blank" rel="noopener noreferrer" class="channel-card instagram">
+                            <i class="fa-brands fa-instagram"></i>
+                            <div>
+                                <strong>Instagram Community</strong>
+                                <span>Follow @monkofuptime for daily drills</span>
+                            </div>
+                        </a>
                     </div>
                 </div>
 
                 <div class="cyber-card contact-form-card">
                     <h3>Submit Your Question</h3>
-                    <form id="master-contact-form">
+                    <form id="master-contact-form" name="devops-doubt" method="POST" data-netlify="true" action="#">
+                        <input type="hidden" name="form-name" value="devops-doubt">
+                        <input type="hidden" name="_captcha" value="false">
+                        <input type="hidden" name="_template" value="table">
+                        <input type="hidden" name="_subject" value="New DevOps Interview Doubt!">
                         <div class="cyber-form-group">
                             <label>Your Name</label>
-                            <input type="text" id="contact-name" placeholder="e.g. Omkar / Alex" required>
+                            <input type="text" id="contact-name" name="name" placeholder="e.g. Alex" required>
                         </div>
                         <div class="cyber-form-group">
                             <label>Your Email</label>
-                            <input type="email" id="contact-email" placeholder="name@domain.com" required>
+                            <input type="email" id="contact-email" name="email" placeholder="name@domain.com" required>
                         </div>
                         <div class="cyber-form-group">
                             <label>Target Topic</label>
-                            <select id="contact-topic">
-                                <option value="Kubernetes">Kubernetes (162 Qs)</option>
+                            <select id="contact-topic" name="topic">
+                                <option value="Kubernetes">Kubernetes (161 Qs)</option>
                                 <option value="Terraform">Terraform (115 Qs)</option>
                                 <option value="Linux">Linux (104 Qs)</option>
-                                <option value="AWS">AWS / Cloud (112 Qs)</option>
+                                <option value="Git">Git & Version Control (104 Qs)</option>
                                 <option value="CI/CD">CI/CD Pipelines (106 Qs)</option>
+                                <option value="Docker">Docker & Containers (106 Qs)</option>
+                                <option value="AWS">AWS / Cloud (112 Qs)</option>
                                 <option value="Networking">Networking (103 Qs)</option>
+                                <option value="GitOps">GitOps & ArgoCD (102 Qs)</option>
                                 <option value="Observability">Observability (103 Qs)</option>
                                 <option value="Security">DevSecOps (102 Qs)</option>
+                                <option value="Scenario">Scenarios & System Design (107 Qs)</option>
                                 <option value="General">General Doubt</option>
                             </select>
                         </div>
                         <div class="cyber-form-group">
                             <label>Your Question / Doubt</label>
-                            <textarea id="contact-message" rows="4" placeholder="Explain your interview doubt in detail..." required></textarea>
+                            <textarea id="contact-message" name="message" rows="4" placeholder="Explain your interview doubt in detail..." required></textarea>
                         </div>
                         <button type="submit" class="cyber-btn btn-primary btn-block">
-                            <i class="fa-solid fa-paper-plane"></i> Send to Owner (WhatsApp & Email)
+                            <i class="fa-solid fa-paper-plane"></i> Send Query via Email
                         </button>
                     </form>
                 </div>
@@ -415,25 +609,28 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
                 <p>The ultimate production-grade interview preparation platform for Cloud, DevOps, and Platform Engineers.</p>
             </div>
             <div class="footer-links">
-                <h4>Topic Vaults</h4>
+                <h4>Topic Vaults (1,325 Total Q&As)</h4>
                 <div class="footer-links-grid">
-                    <a href="kubernetes.html">Kubernetes (162)</a>
-                    <a href="terraform.html">Terraform (115)</a>
-                    <a href="linux.html">Linux (104)</a>
-                    <a href="aws.html">AWS Cloud (112)</a>
-                    <a href="cicd.html">CI/CD (106)</a>
-                    <a href="networking.html">Networking (103)</a>
-                    <a href="observability.html">Observability (103)</a>
-                    <a href="security.html">DevSecOps (102)</a>
-                    <a href="scenario.html">Scenarios (107)</a>
+                    <a href="kubernetes.html">Kubernetes  (161)</a>
+                    <a href="terraform.html">Terraform  (115)</a>
+                    <a href="linux.html">Linux  (104)</a>
+                    <a href="git.html">Git  (104)</a>
+                    <a href="cicd.html">CI/CD  (106)</a>
+                    <a href="docker.html">Docker  (106)</a>
+                    <a href="aws.html">AWS Cloud  (112)</a>
+                    <a href="networking.html">Networking  (103)</a>
+                    <a href="gitops.html">GitOps  (102)</a>
+                    <a href="observability.html">Observability  (103)</a>
+                    <a href="security.html">DevSecOps  (102)</a>
+                    <a href="scenario.html">Scenarios  (107)</a>
                 </div>
             </div>
             <div class="footer-social">
-                <h4>Community</h4>
+                <h4>Connect & Join</h4>
                 <div class="social-icons">
-                    <a href="https://discord.gg/devops-prep" target="_blank" class="social-btn discord"><i class="fa-brands fa-discord"></i></a>
-                    <a href="https://wa.me/919876543210" target="_blank" class="social-btn whatsapp"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="https://github.com" target="_blank" class="social-btn github"><i class="fa-brands fa-github"></i></a>
+                    <a href="https://discord.com/channels/1557713231521251368/1557713232091680800" target="_blank" class="social-btn discord" title="Discord Community"><i class="fa-brands fa-discord"></i></a>
+                    <a href="https://www.instagram.com/monkofuptime/" target="_blank" rel="noopener noreferrer" class="social-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://github.com" target="_blank" class="social-btn github" title="GitHub"><i class="fa-brands fa-github"></i></a>
                 </div>
             </div>
         </div>
@@ -444,7 +641,7 @@ Plan: 0 to add, 1 to change, 0 to destroy.</div>
 
     <!-- Libraries -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="js/all_questions.js"></script>
-    <script src="js/cyber_app.js"></script>
+    <script src="js/all_questions.js?v=2026.15"></script>
+    <script src="js/cyber_app.js?v=2026.15"></script>
 </body>
 </html>

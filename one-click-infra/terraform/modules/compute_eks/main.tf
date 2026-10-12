@@ -161,3 +161,4 @@ resource "aws_iam_openid_connect_provider" "this" {
 
   tags = local.common_tags
 }
+
