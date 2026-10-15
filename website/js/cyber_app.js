@@ -346,7 +346,7 @@ function initModernNavbar() {
                     <div class="mega-menu-top-bar">
                         <div class="mega-top-left">
                             <span class="mega-pill-badge"><i class="fa-solid fa-graduation-cap"></i> 12 Specialization Vaults</span>
-                            <span class="mega-top-info">1,325+ Curated Questions with Production Code & Spoken Audio Reader</span>
+                            <span class="mega-top-info">1,320+ Curated Questions with Production Code & Spoken Audio Reader</span>
                         </div>
                         <a href="index.html#topics-grid" class="mega-view-grid-btn">
                             <span>Browse Vault Grid</span> <i class="fa-solid fa-arrow-right"></i>
@@ -737,6 +737,18 @@ function initStatsCounter() {
 /* ==========================================================================
    6. Topic Question Feed (Accordion, Flashcards & Mastery Tracker)
    ========================================================================== */
+const ALL_TOPIC_KEYS = ['kubernetes','terraform','linux','aws','cicd','docker','git','networking','gitops','observability','security','scenario'];
+const DATA_VERSION = '2026.22';
+window.loadAllQuestions = function () {
+    window.allQuestionsData = window.allQuestionsData || {};
+    return Promise.all(ALL_TOPIC_KEYS.filter(t => !window.allQuestionsData[t]).map(t => new Promise((resolve) => {
+        const sc = document.createElement('script');
+        sc.src = `js/data/${t}.js?v=${DATA_VERSION}`;
+        sc.onload = sc.onerror = resolve;
+        document.head.appendChild(sc);
+    }))).then(() => window.allQuestionsData);
+};
+
 let activeViewMode = 'accordion'; // 'accordion' or 'flashcard'
 let activeFilter = 'all';
 let activeSubTag = 'all';
@@ -883,8 +895,9 @@ function initTopicFeed(topicKey) {
     // Filter clicks
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
-            filterButtons.forEach(b => b.classList.remove('active'));
+            filterButtons.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
             btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
             activeFilter = btn.getAttribute('data-filter') || 'all';
             render();
         });
@@ -927,21 +940,21 @@ function renderAccordionCard(item, isMastered) {
 
     return `
         <div class="cyber-qa-item ${isMastered ? 'mastered-card' : ''}" id="${item.id}">
-            <div class="qa-header-row">
+            <div class="qa-header-row" role="button" tabindex="0" aria-expanded="false" aria-controls="ans-${item.id}">
                 <div class="qa-meta-bar">
                     <div class="qa-left-meta">
                         <span class="badge-level ${badgeClass}">${levelLabel}</span>
                         ${item.source ? `<span class="q-source-tag"><i class="fa-solid fa-book-bookmark"></i> ${item.source}</span>` : ''}
-                        <label class="mastered-checkbox-wrap" title="Mark as Mastered">
-                            <input type="checkbox" class="q-mastery-chk" data-qid="${item.id}" ${isMastered ? 'checked' : ''}>
-                            <span>${isMastered ? 'Mastered' : 'Mark Learned'}</span>
-                        </label>
                     </div>
                 </div>
                 <div class="qa-title-wrapper">
                     <h4 class="qa-question-title">${item.question}</h4>
                 </div>
                 <div class="qa-actions-row">
+                    <label class="mastered-checkbox-wrap" title="Mark as Mastered">
+                        <input type="checkbox" class="q-mastery-chk" data-qid="${item.id}" ${isMastered ? 'checked' : ''}>
+                        <span>${isMastered ? 'Mastered' : 'Mark Learned'}</span>
+                    </label>
                     <button class="btn-tts-listen" data-qid="${item.id}" title="Listen to Question & Answer">
                         <i class="fa-solid fa-volume-high"></i>
                         <span class="tts-wave-bars"><span class="wb-bar"></span><span class="wb-bar"></span><span class="wb-bar"></span></span>
@@ -976,7 +989,7 @@ function renderAccordionCard(item, isMastered) {
                     <button class="btn-drill-action close" onclick="closeDrillTimer('${item.id}')"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            <div class="qa-answer-body">
+            <div class="qa-answer-body" id="ans-${item.id}">
                 <div class="qa-answer-inner">
                     ${item.answer}
                     <div class="qa-tags-row">
@@ -1028,6 +1041,10 @@ function attachAccordionListeners() {
             if (e.target.closest('.qa-actions-row')) return;
             const card = header.closest('.cyber-qa-item');
             card.classList.toggle('active');
+            header.setAttribute('aria-expanded', card.classList.contains('active') ? 'true' : 'false');
+        });
+        header.addEventListener('keydown', (e) => {
+            if ((e.key === 'Enter' || e.key === ' ') && e.target === header) { e.preventDefault(); header.click(); }
         });
     });
 }
@@ -1383,7 +1400,7 @@ function initCommunityPortal() {
             const isDisliked = userReaction === 'dislike';
 
             return `
-            <div class="community-card-post" id="${post.id}">
+            <div class="community-card-post" id="${escapeHtml(String(post.id))}">
                 <div class="comm-post-header">
                     <div class="comm-author-box">
                         <div class="author-avatar">${authorInitial}</div>
@@ -1395,10 +1412,10 @@ function initCommunityPortal() {
                         </div>
                     </div>
                     <div class="comm-actions-bar" style="display: flex; align-items: center; gap: 0.45rem;">
-                        <button class="comm-upvote-btn ${isLiked ? 'active' : ''}" onclick="handlePostReaction('${post.id}', 'like')" title="${isLiked ? 'Liked (click to undo)' : 'Like'}">
+                        <button class="comm-upvote-btn ${isLiked ? 'active' : ''}" data-action="react" data-type="like" data-id="${escapeHtml(String(post.id))}" title="${isLiked ? 'Liked (click to undo)' : 'Like'}">
                             <i class="fa-solid fa-thumbs-up"></i> <span>${post.upvotes || 0}</span>
                         </button>
-                        <button class="comm-downvote-btn ${isDisliked ? 'active' : ''}" onclick="handlePostReaction('${post.id}', 'dislike')" title="${isDisliked ? 'Disliked (click to undo)' : 'Dislike'}">
+                        <button class="comm-downvote-btn ${isDisliked ? 'active' : ''}" data-action="react" data-type="dislike" data-id="${escapeHtml(String(post.id))}" title="${isDisliked ? 'Disliked (click to undo)' : 'Dislike'}">
                             <i class="fa-solid fa-thumbs-down"></i> <span>${post.downvotes || 0}</span>
                         </button>
                     </div>
@@ -1413,17 +1430,29 @@ function initCommunityPortal() {
                                 <span><i class="fa-solid fa-reply"></i> <strong>${escapeHtml(r.author || 'Engineer')}</strong></span>
                                 <span style="color: var(--text-muted); font-size: 0.72rem;">${escapeHtml(r.timestamp || 'Recent')}</span>
                             </div>
-                            <div style="color: #cbd5e1; line-height: 1.5;">${r.text}</div>
+                            <div style="color: #cbd5e1; line-height: 1.5;">${safeReplyHtml(r.text)}</div>
                         </div>
                     `).join('')}
                 </div>
                 <div class="reply-input-row" style="display: flex; gap: 0.5rem; margin-top: 0.25rem;">
-                    <input type="text" placeholder="Write an expert solution / answer..." id="reply-in-${post.id}" style="flex: 1;" onkeydown="if(event.key==='Enter') addReply('${post.id}')">
-                    <button class="cyber-btn btn-outline" style="padding: 0.45rem 1rem; font-size: 0.85rem;" onclick="addReply('${post.id}')">Reply</button>
+                    <input type="text" placeholder="Write an expert solution / answer..." id="reply-in-${escapeHtml(String(post.id))}" data-reply-input data-id="${escapeHtml(String(post.id))}" maxlength="1000" aria-label="Write an answer" style="flex: 1;">
+                    <button class="cyber-btn btn-outline" style="padding: 0.45rem 1rem; font-size: 0.85rem;" data-action="reply" data-id="${escapeHtml(String(post.id))}">Reply</button>
                 </div>
             </div>
             `;
         }).join('');
+        if (!feed.dataset.bound) {
+            feed.dataset.bound = '1';
+            feed.addEventListener('click', (e) => {
+                const el = e.target.closest('[data-action]');
+                if (!el || !feed.contains(el)) return;
+                if (el.dataset.action === 'react') window.handlePostReaction(el.dataset.id, el.dataset.type);
+                else if (el.dataset.action === 'reply') window.addReply(el.dataset.id);
+            });
+            feed.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && e.target.matches('[data-reply-input]')) window.addReply(e.target.dataset.id);
+            });
+        }
         activeCommunityRenderFeed = renderFeed;
     }
 
@@ -1795,7 +1824,7 @@ window.downvotePost = function(postId) {
 window.addReply = async function(postId) {
     const input = document.getElementById(`reply-in-${postId}`);
     if (!input || !input.value.trim()) return;
-    const text = escapeHtml(input.value.trim());
+    const text = input.value.trim().slice(0, 1000);
 
     const replyObj = {
         author: 'Engineer',
@@ -1925,8 +1954,13 @@ document.addEventListener('click', (e) => {
     }
 });
 
+function safeReplyHtml(str) {
+    // escape everything, then re-allow a tiny whitelist of bare formatting tags
+    return escapeHtml(str).replace(/&lt;(\/?)(code|strong|em|b|i)&gt;/g, '<$1$2>');
+}
+
 function escapeHtml(str) {
-    return str.replace(/[&<>'"]/g, 
+    return String(str == null ? '' : str).replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
     );
 }
@@ -1942,7 +1976,13 @@ function showCyberToast(msg) {
         toast.className = 'cyber-toast';
         document.body.appendChild(toast);
     }
-    toast.innerHTML = `<i class="fa-solid fa-bolt" style="color: var(--neon-cyan);"></i> ${msg}`;
+    toast.textContent = '';
+    const toastIcon = document.createElement('i');
+    toastIcon.className = 'fa-solid fa-bolt';
+    toastIcon.style.color = 'var(--neon-cyan)';
+    toast.append(toastIcon, ' ' + String(msg));
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
     toast.classList.add('show');
     setTimeout(() => {
         toast.classList.remove('show');
@@ -2008,7 +2048,7 @@ function injectGlobalUI() {
             <div class="global-search-box">
                 <div class="global-search-input-row">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="global-search-input" placeholder="Search all 1325+ questions across 12 topics..." autocomplete="off">
+                    <input type="text" id="global-search-input" placeholder="Search all 1320+ questions across 12 topics..." autocomplete="off">
                     <button class="global-search-close" onclick="closeGlobalSearch()"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div id="global-search-results"></div>
@@ -2095,8 +2135,8 @@ function injectGlobalUI() {
         drawer.innerHTML = `
             <div class="sidebar-header">
                 <a href="index.html" class="cyber-logo" style="font-size:1rem; text-decoration:none;">
-                    <span class="logo-glitch" data-text="DEVOPS.SRE">DEVOPS.SRE</span>
-                    <span class="logo-tag">VAULT</span>
+                    <img src="images/logo.png" alt="monkofuptime" class="cyber-logo-img" style="width:26px; height:26px;">
+                    <span class="logo-glitch" data-text="monkofuptime">monkofuptime</span>
                 </a>
                 <button class="sidebar-close-btn" onclick="closeSidebar()"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -2130,7 +2170,7 @@ function injectGlobalUI() {
                 <a href="observability.html" class="${currentPage === 'observability.html' ? 'active' : ''}"><i class="fa-solid fa-chart-line" style="color: #a855f7;"></i> Observability</a>
                 <a href="security.html" class="${currentPage === 'security.html' ? 'active' : ''}"><i class="fa-solid fa-shield-halved" style="color: #ec4899;"></i> DevSecOps</a>
             </div>
-            <div class="sidebar-footer">DevOps SRE Vault 2026 • 1325+ Questions</div>`;
+            <div class="sidebar-footer">monkofuptime • 1320+ Questions</div>`;
         document.body.appendChild(drawer);
     }
 }
@@ -2260,7 +2300,7 @@ function initGlobalSearch() {
         if (e.target.closest('#global-search-trigger')) openGlobalSearch();
     });
 
-    document.addEventListener('input', (e) => {
+    document.addEventListener('input', async (e) => {
         if (e.target.id !== 'global-search-input') return;
         const query = e.target.value.trim();
         const resultsEl = document.getElementById('global-search-results');
@@ -2271,8 +2311,10 @@ function initGlobalSearch() {
             return;
         }
 
-        const data = window.allQuestionsData;
+        resultsEl.innerHTML = '<div class="gsearch-empty">Searching…</div>';
+        const data = await window.loadAllQuestions();
         if (!data) { resultsEl.innerHTML = '<div class="gsearch-empty">Questions data not loaded</div>'; return; }
+        if (e.target.value.trim() !== query) return; // a newer keystroke superseded this search
 
         const results = [];
         const q = query.toLowerCase();
@@ -2344,8 +2386,9 @@ function initMockInterview() {
     // Just ensures overlay exists (created in injectGlobalUI)
 }
 
-function startMockInterview() {
-    const data = window.allQuestionsData;
+async function startMockInterview() {
+    showCyberToast('Loading question bank…');
+    const data = await window.loadAllQuestions();
     if (!data) { showCyberToast('Questions not loaded yet'); return; }
 
     // Pick 10 random questions from across all topics
@@ -2568,7 +2611,7 @@ const TOPIC_CONFIG = [
     { key: 'security',     label: 'Security',        total: 102, color: '#a855f7' },
     { key: 'scenario',     label: 'Scenarios',       total: 107, color: '#facc15' },
 ];
-const TOTAL_QUESTIONS = 1325;
+const TOTAL_QUESTIONS = 1320;
 
 function initGlobalProgressDashboard() {
     const section = document.getElementById('global-progress-section');

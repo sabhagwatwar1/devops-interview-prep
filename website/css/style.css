@@ -255,11 +255,27 @@ body {
   color: #fff;
 }
 
+.cyber-logo-img {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: inline-block;
+  border: 1px solid rgba(192, 132, 252, 0.4);
+  box-shadow: 0 0 10px rgba(192, 132, 252, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cyber-logo:hover .cyber-logo-img {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(192, 132, 252, 0.45);
+}
+
 .logo-glitch {
-  background: linear-gradient(90deg, var(--neon-cyan), var(--neon-green), #fff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 15px rgba(0, 240, 255, 0.5);
+  color: #c084fc;
+  -webkit-text-fill-color: #c084fc;
+  text-shadow: 0 0 15px rgba(192, 132, 252, 0.55);
 }
 
 .logo-tag {
@@ -1545,17 +1561,29 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: var(--text-muted);
+  padding: 0.22rem 0.55rem;
+  border-radius: 4px;
+  background: rgba(0, 255, 136, 0.08);
+  border: 1px solid rgba(0, 255, 136, 0.25);
+  color: var(--neon-green);
   cursor: pointer;
   white-space: nowrap;
   user-select: none;
+  transition: all 0.2s ease;
+}
+.mastered-checkbox-wrap:hover {
+  background: rgba(0, 255, 136, 0.16);
+  border-color: rgba(0, 255, 136, 0.45);
+  color: #fff;
 }
 .mastered-checkbox-wrap input[type="checkbox"] {
   accent-color: var(--neon-green);
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   cursor: pointer;
+  margin: 0;
 }
 
 .qa-title-wrapper {
@@ -4076,3 +4104,35 @@ body {
 
 
 
+
+/* ── Accessibility: skip link, focus ring, reduced motion ─────────────── */
+.skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: -4rem;
+  z-index: 10000;
+  padding: 0.6rem 1rem;
+  background: var(--neon-cyan, #00d4ff);
+  color: #04060e;
+  font-weight: 700;
+  border-radius: 6px;
+  text-decoration: none;
+}
+.skip-link:focus { top: 0.75rem; }
+.qa-header-row:focus-visible,
+.filter-btn:focus-visible,
+.subchip-btn:focus-visible,
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--neon-cyan, #00d4ff);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
