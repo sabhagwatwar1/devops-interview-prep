@@ -1,0 +1,6 @@
+{
+  "name": "devops-vault-tests",
+  "private": true,
+  "scripts": { "test": "node verify_question_counts.js" },
+  "devDependencies": { "jsdom": "^26.0.0" }
+}

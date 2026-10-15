@@ -2,7 +2,7 @@
  * DevOps & SRE Master Vault - Service Worker (Offline Cache)
  */
 
-const CACHE_NAME = 'devops-vault-v2026.15';
+const CACHE_NAME = 'devops-vault-v2026.22';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -21,9 +21,9 @@ const ASSETS_TO_CACHE = [
   './community.html',
   './css/style.css',
   './js/cyber_app.js',
-  './js/all_questions.js',
   './js/firebase-config.js',
-  './manifest.json'
+  './manifest.json',
+  './images/logo.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -52,6 +52,21 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  // Question data: network-first so content fixes reach returning users immediately
+  const reqUrl = new URL(event.request.url);
+  if (reqUrl.origin === self.location.origin && /\/js\/(data\/[a-z]+|all_questions)\.js$/.test(reqUrl.pathname)) {
+    event.respondWith(
+      fetch(event.request).then((res) => {
+        if (res && res.status === 200) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(event.request, copy));
+        }
+        return res;
+      }).catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
